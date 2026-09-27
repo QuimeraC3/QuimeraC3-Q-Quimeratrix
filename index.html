@@ -477,10 +477,15 @@
         document.getElementById('iniciar-exploracion').addEventListener('click', function(e) {
             e.preventDefault();
             const modalOculto = document.getElementById('modal-zona-oculta');
+            const controlsBar = document.querySelector('.controls-bar');
             const overlay = document.getElementById('intro-overlay');
             
             modalOculto.classList.remove('tv-turn-on');
             modalOculto.classList.add('tv-turn-off');
+
+            if (controlsBar) {
+                controlsBar.classList.add('tv-turn-off');
+            }
 
             setTimeout(() => {
                 matrixCanvas.style.opacity = '0';
