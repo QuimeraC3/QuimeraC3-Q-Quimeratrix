@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quimera &bull; Bienvenida Modo Oculto</title>
+    <style>
+        :root {
+            --accent: #c88b32;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+            background-color: #000000;
+        }
+
+        /* Lienzo Matrix */
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 1200ms ease;
+        }
+
+        /* Overlay difuminado inicial */
+        #intro-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #ffffff;
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 1;
+            transition: opacity 1000ms ease, background-color 1000ms ease;
+        }
+
+        /* Controles flotantes superiores */
+        .controls-bar {
+            position: fixed;
+            top: 1rem;
+            right: 1.5rem;
+            z-index: 30000;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-control {
+            background: rgba(200, 139, 50, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+            padding: 0.4rem 0.9rem;
+            border-radius: 20px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: background 0.3s ease;
+        }
+
+        .btn-control:hover {
+            background: var(--accent);
+        }
+
+        /* Modal Zona Oculta */
+        #modal-zona-oculta {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: transparent;
+            z-index: 25000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0, 0.01); 
+        }
+
+        .contenido-zona-oculta {
+            background: rgba(11, 19, 41, 0.85);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            padding: 2.5rem 3rem;
+            width: 85vw;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow-y: auto;
+            color: #ffffff;
+            box-shadow: 0 0 40px rgba(200, 139, 50, 0.15);
+            font-size: clamp(0.85rem, 1.2vw, 1rem);
+            line-height: 1.7;
+        }
+
+        .contenido-zona-oculta h2,
+        .contenido-zona-oculta p,
+        #iniciar-exploracion {
+            opacity: 0;
+        }
+
+        .contenido-zona-oculta::-webkit-scrollbar { width: 8px; }
+        .contenido-zona-oculta::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); }
+        .contenido-zona-oculta::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+
+        .titulo-oculto {
+            color: var(--accent);
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .contenido-zona-oculta p {
+            margin-bottom: 1.2rem;
+            color: #ffffff;
+        }
+
+        .contenedor-enlace-final {
+            text-align: right;
+            margin-top: 3rem;
+        }
+
+        #iniciar-exploracion {
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 0.05em;
+            color: #ffffff;
+            transition: opacity 500ms ease;
+            display: inline-block;
+        }
+
+        .exploracion-letter {
+            display: inline-block;
+            color: #ffffff;
+            white-space: pre;
+        }
+
+        @keyframes quimeraSequentialWave {
+            0%     { color: #ffffff; }
+            3.57%  { color: #c88b32; }
+            25%    { color: #c88b32; }
+            28.57% { color: #ffffff; }
+            50%    { color: #ffffff; }
+            53.57% { color: #c88b32; }
+            75%    { color: #c88b32; }
+            78.57% { color: #ffffff; }
+            100%   { color: #ffffff; }
+        }
+
+        #iniciar-exploracion.active-wave .exploracion-letter {
+            animation: quimeraSequentialWave 2.264s infinite linear;
+        }
+
+        /* Animación TV Encendiéndose */
+        .tv-turn-on {
+            animation: tvTurnOn 0.7s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+            pointer-events: auto !important;
+        }
+
+        @keyframes tvTurnOn {
+            0% { transform: scale(0, 0.01); opacity: 0; filter: brightness(20); }
+            40% { transform: scale(1, 0.01); opacity: 1; filter: brightness(10); }
+            100% { transform: scale(1, 1); opacity: 1; filter: brightness(1); }
+        }
+
+        /* Animación TV Apagándose */
+        .tv-turn-off {
+            animation: tvTurnOff 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+            pointer-events: none !important;
+        }
+
+        @keyframes tvTurnOff {
+            0% { transform: scale(1, 1); opacity: 1; filter: brightness(1); }
+            60% { transform: scale(1, 0.01); opacity: 1; filter: brightness(10); }
+            100% { transform: scale(0, 0.01); opacity: 0; filter: brightness(20); }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bg-music" src="Tango_Futuro_(Lado_B).mp3" loop preload="auto"></audio>
+    <canvas id="matrix-canvas"></canvas>
+    <div id="intro-overlay"></div>
+
+    <div class="controls-bar">
+        <button class="btn-control" id="audio-toggle">🎵 Música: OFF</button>
+        <button class="btn-control" id="fullscreen-toggle">⛶ Pantalla Completa</button>
+    </div>
+
+    <div id="modal-zona-oculta">
+        <div class="contenido-zona-oculta">
+            <h2 class="titulo-oculto">HAS ENCONTRADO LA ZONA OCULTA DE QUIMERA.</h2>
+            
+            <p>¡FELICIDADES, NAVEGANTE!</p>
+            <p>Si estás leyendo este mensaje, significa que has encontrado uno de los accesos ocultos del ecosistema QUIMERA.</p>
+            <p>No todos los caminos están señalizados. Algunos deben descubrirse.</p>
+            <p>Has llegado a un espacio concebido para quienes sienten curiosidad por mirar un poco más allá de lo evidente. Aquí comienza una experiencia distinta de navegación: más inmersiva, más exploratoria y quizá, un poco más enigmática.</p>
+
+            <p><strong>ANTES DE CONTINUAR…</strong><br>
+            Para disfrutar plenamente de esta experiencia, te recomendamos:</p>
+
+            <p>◈ <strong>Activar la pantalla completa:</strong><br>
+            Presiona F11 en tu teclado para ampliar el espacio de navegación y favorecer una experiencia más inmersiva.</p>
+
+            <p>◈ <strong>Enciende la música:</strong><br>
+            Utiliza el botón de música para escuchar el soundtrack del Instituto QUIMERA.<br>
+            La música no está aquí por accidente: forma parte de la atmósfera de este espacio.</p>
+
+            <p>◈ <strong>Explora sin prisa:</strong><br>
+            Observa los textos, imágenes, símbolos y elementos interactivos. Algunos caminos pueden conducir a lugares que no aparecen a primera vista.</p>
+
+            <p>◈ <strong>Haz clic. Investiga. Regresa.</strong><br>
+            QUIMERA está diseñado para ser recorrido, no simplemente consultado. Si algo despierta tu curiosidad, síguelo.</p>
+
+            <p>◈ <strong>Presta atención a los detalles:</strong><br>
+            En este ecosistema, algunos elementos cumplen más de una función. Lo que parece ornamental podría ser una pista. Lo que parece una pista podría conducir a otra.</p>
+
+            <p><strong>Y SOBRE TODO…</strong><br>
+            No dejes de buscar.</p>
+
+            <p>QUIMERA guarda fragmentos de su propia historia en lugares que no siempre se anuncian.<br>
+            Algunos fragmentos de QUIMERA no se encuentran en los caminos principales: hay que descubrirlos.</p>
+
+            <p>Si has llegado hasta aquí, ya has demostrado que sabes encontrar lo que permanece oculto.</p>
+
+            <p>Ahora comienza la verdadera exploración. Continúa recorriendo el ecosistema. Sigue las pistas. Descubre los símbolos. Encuentra los caminos que no aparecen en el mapa.</p>
+
+            <p>Porque detrás de QUIMERA existe una historia. Una historia que espera ser descubierta.</p>
+
+            <p>¿Serás capaz de encontrarla?</p>
+
+            <p>La exploración apenas comienza...</p>
+
+            <p>BIENVENIDOS A LA ZONA OCULTA DE QUIMERA</p>
+
+            <div class="contenedor-enlace-final">
+                <a href="#" id="iniciar-exploracion">COMENZAR LA EXPLORACIÓN.</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURACIÓN DE REDIRECCIÓN AL ECOSISTEMA
+        const ECOSYSTEM_URL = "https://quimerac3.github.io/"; // Reemplaza con la URL final de tu repositorio principal del Ecosistema
+
+        // MOTOR ANIMACIÓN MATRIX
+        const matrixCanvas = document.getElementById('matrix-canvas');
+        const matrixCtx = matrixCanvas.getContext('2d');
+        let matrixInterval = null;
+        let drops = [];
+        const fontSize = 16;
+        const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン';
+        const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        const alphabet = katakana + latin;
+
+        function initMatrix() {
+            matrixCanvas.width = window.innerWidth;
+            matrixCanvas.height = window.innerHeight;
+            const columns = Math.floor(matrixCanvas.width / fontSize);
+            drops = Array(columns).fill(1);
+        }
+
+        function drawMatrix() {
+            matrixCtx.globalCompositeOperation = 'destination-out';
+            matrixCtx.fillStyle = 'rgba(0, 0, 0, 0.08)'; 
+            matrixCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+
+            matrixCtx.globalCompositeOperation = 'source-over';
+            matrixCtx.fillStyle = '#c88b32';
+            matrixCtx.font = `${fontSize}px monospace`;
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                const x = i * fontSize;
+                const y = drops[i] * fontSize;
+
+                matrixCtx.fillText(text, x, y);
+
+                if (y > matrixCanvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        function startMatrix() {
+            initMatrix();
+            if (!matrixInterval) {
+                matrixInterval = setInterval(drawMatrix, 33);
+            }
+        }
+
+        window.addEventListener('resize', initMatrix);
+
+        // MOTOR MÁQUINA DE ESCRIBIR MATRIX
+        function mecaEscribirMatrix(elemento, velocidad = 10, alTerminar = null) {
+            const textoOriginal = elemento.innerHTML;
+            elemento.innerHTML = '';
+            elemento.style.opacity = '1';
+
+            const glifos = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピ0123456789AZ';
+            
+            const tokens = [];
+            let tagStack = '';
+            let insideTag = false;
+
+            for (let char of textoOriginal) {
+                if (char === '<') {
+                    insideTag = true;
+                    tagStack += char;
+                } else if (char === '>') {
+                    insideTag = false;
+                    tagStack += char;
+                    tokens.push({ type: 'tag', value: tagStack });
+                    tagStack = '';
+                } else if (insideTag) {
+                    tagStack += char;
+                } else {
+                    tokens.push({ type: 'char', value: char });
+                }
+            }
+
+            let tokenIndex = 0;
+            let htmlAcumulado = '';
+
+            function escribirSiguiente() {
+                if (tokenIndex >= tokens.length) {
+                    elemento.innerHTML = textoOriginal;
+                    if (alTerminar) alTerminar();
+                    return;
+                }
+
+                const currentToken = tokens[tokenIndex];
+
+                if (currentToken.type === 'tag') {
+                    htmlAcumulado += currentToken.value;
+                    elemento.innerHTML = htmlAcumulado;
+                    tokenIndex++;
+                    escribirSiguiente();
+                } else {
+                    let ciclosMatrix = 0;
+                    const charReal = currentToken.value;
+
+                    if (charReal === ' ' || charReal === '\n' || charReal === '\r') {
+                        htmlAcumulado += charReal;
+                        elemento.innerHTML = htmlAcumulado;
+                        tokenIndex++;
+                        setTimeout(escribirSiguiente, velocidad);
+                    } else {
+                        const intervalMatrix = setInterval(() => {
+                            const glifoRandom = glifos.charAt(Math.floor(Math.random() * glifos.length));
+                            elemento.innerHTML = htmlAcumulado + `<span style="color: var(--accent); font-weight: bold;">${glifoRandom}</span>`;
+                            ciclosMatrix++;
+
+                            if (ciclosMatrix >= 2) { 
+                                clearInterval(intervalMatrix);
+                                htmlAcumulado += charReal;
+                                elemento.innerHTML = htmlAcumulado;
+                                tokenIndex++;
+                                setTimeout(escribirSiguiente, velocidad);
+                            }
+                        }, 5);
+                    }
+                }
+            }
+
+            escribirSiguiente();
+        }
+
+        function iniciarEscrituraModalMatrix() {
+            const elementos = Array.from(document.querySelectorAll('.contenido-zona-oculta h2, .contenido-zona-oculta p'));
+            let index = 0;
+
+            function procesarSiguiente() {
+                if (index < elementos.length) {
+                    const el = elementos[index];
+                    index++;
+                    mecaEscribirMatrix(el, 4, procesarSiguiente);
+                } else {
+                    const btn = document.getElementById('iniciar-exploracion');
+                    if (btn) {
+                        btn.classList.remove('active-wave');
+                        btn.textContent = 'COMENZAR LA EXPLORACIÓN.';
+                        
+                        mecaEscribirMatrix(btn, 25, function() {
+                            const texto = btn.textContent;
+                            btn.innerHTML = '';
+                            [...texto].forEach((char, idx) => {
+                                const span = document.createElement('span');
+                                span.className = 'exploracion-letter';
+                                span.textContent = char;
+                                span.style.animationDelay = `${idx * 80.85}ms`;
+                                btn.appendChild(span);
+                            });
+                            btn.classList.add('active-wave');
+                        });
+                    }
+                }
+            }
+
+            procesarSiguiente();
+        }
+
+        // CONTROLES DE AUDIO Y PANTALLA COMPLETA
+        const music = document.getElementById('bg-music');
+        const audioToggle = document.getElementById('audio-toggle');
+        let isMusicPlaying = false;
+
+        audioToggle.addEventListener('click', () => {
+            if (isMusicPlaying) {
+                music.pause();
+                audioToggle.innerHTML = '🎵 Música: OFF';
+                isMusicPlaying = false;
+            } else {
+                music.play().then(() => {
+                    audioToggle.innerHTML = '🎶 Música: ON';
+                    isMusicPlaying = true;
+                }).catch(err => console.log(err));
+            }
+        });
+
+        const fullscreenToggle = document.getElementById('fullscreen-toggle');
+        fullscreenToggle.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().then(() => {
+                    fullscreenToggle.textContent = '❌ Salir Pantalla Completa';
+                });
+            } else {
+                document.exitFullscreen().then(() => {
+                    fullscreenToggle.textContent = '⛶ Pantalla Completa';
+                });
+            }
+        });
+
+        // SECUENCIA DE INTRO Y SALIDA
+        function runIntroSequence() {
+            const overlay = document.getElementById('intro-overlay');
+            const modalOculto = document.getElementById('modal-zona-oculta');
+
+            setTimeout(() => { overlay.style.backgroundColor = '#000000'; }, 300);
+
+            setTimeout(() => {
+                initMatrix();                     
+                startMatrix();                    
+                matrixCanvas.style.opacity = '1'; 
+                overlay.style.opacity = '0';      
+                
+                setTimeout(() => {
+                    modalOculto.classList.add('tv-turn-on');
+                    setTimeout(iniciarEscrituraModalMatrix, 700);
+                }, 2500);
+
+            }, 800);
+        }
+
+        document.getElementById('iniciar-exploracion').addEventListener('click', function(e) {
+            e.preventDefault();
+            const modalOculto = document.getElementById('modal-zona-oculta');
+            const overlay = document.getElementById('intro-overlay');
+            
+            modalOculto.classList.remove('tv-turn-on');
+            modalOculto.classList.add('tv-turn-off');
+
+            setTimeout(() => {
+                matrixCanvas.style.opacity = '0';
+                overlay.style.backgroundColor = '#ffffff';
+                overlay.style.opacity = '1';
+                setTimeout(() => {
+                    window.location.href = ECOSYSTEM_URL;
+                }, 1000);
+            }, 600);
+        });
+
+        window.addEventListener('DOMContentLoaded', runIntroSequence);
+    </script>
+</body>
+</html>
