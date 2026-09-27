@@ -60,6 +60,9 @@
             z-index: 30000;
             display: flex;
             gap: 1rem;
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0, 0.01);
         }
 
         .btn-control {
@@ -457,6 +460,7 @@
         function runIntroSequence() {
             const overlay = document.getElementById('intro-overlay');
             const modalOculto = document.getElementById('modal-zona-oculta');
+            const controlsBar = document.querySelector('.controls-bar');
 
             setTimeout(() => { overlay.style.backgroundColor = '#000000'; }, 300);
 
@@ -468,6 +472,9 @@
                 
                 setTimeout(() => {
                     modalOculto.classList.add('tv-turn-on');
+                    if (controlsBar) {
+                        controlsBar.classList.add('tv-turn-on');
+                    }
                     setTimeout(iniciarEscrituraModalMatrix, 700);
                 }, 2500);
 
@@ -484,6 +491,7 @@
             modalOculto.classList.add('tv-turn-off');
 
             if (controlsBar) {
+                controlsBar.classList.remove('tv-turn-on');
                 controlsBar.classList.add('tv-turn-off');
             }
 
