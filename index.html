@@ -481,6 +481,7 @@
             }, 800);
         }
 
+        // REDIRECCIÓN CONTROLADA (Elimina Quimeratrix del historial)
         document.getElementById('iniciar-exploracion').addEventListener('click', function(e) {
             e.preventDefault();
             const modalOculto = document.getElementById('modal-zona-oculta');
@@ -500,9 +501,17 @@
                 overlay.style.backgroundColor = '#ffffff';
                 overlay.style.opacity = '1';
                 setTimeout(() => {
-                    window.location.href = ECOSYSTEM_URL;
+                    // Reemplaza esta vista en la pila del historial
+                    window.location.replace(ECOSYSTEM_URL);
                 }, 1000);
             }, 600);
+        });
+
+        // RECUPERACIÓN DESDE CACHÉ (Evita pantalla congelada/blanca al regresar)
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                window.location.replace(ECOSYSTEM_URL);
+            }
         });
 
         window.addEventListener('DOMContentLoaded', runIntroSequence);
