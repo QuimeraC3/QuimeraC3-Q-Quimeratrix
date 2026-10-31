@@ -25,6 +25,28 @@
             background-color: #000000;
         }
 
+        /* EFECTO CRT UNIFICADO (Scanlines RGB SIN oscurecimiento en esquinas) */
+        .crt-screen-effect {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+        }
+
+        .crt-screen-effect::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 20;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.015), rgba(0, 0, 255, 0.04));
+            background-size: 100% 3px, 6px 100%;
+            opacity: 0.8;
+            border-radius: inherit;
+        }
+
         /* Lienzo Matrix */
         #matrix-canvas {
             position: fixed;
@@ -98,25 +120,32 @@
             transform: scale(0, 0.01); 
         }
 
+        /* Contenedor con imagen posterior Quimeratrix.webp */
         .contenido-zona-oculta {
-            background: rgba(11, 19, 41, 0.85);
-            border: 1px solid var(--accent);
-            border-radius: 8px;
+            position: relative;
+            background-image: linear-gradient(rgba(11, 19, 41, 0.88), rgba(11, 19, 41, 0.88)), url('Quimeratrix.webp');
+            background-size: cover;
+            background-position: center center;
+            border: 1.5px solid var(--accent);
+            border-radius: 12px;
             padding: 2.5rem 3rem;
             width: 85vw;
             max-width: 800px;
             max-height: 85vh;
             overflow-y: auto;
             color: #ffffff;
-            box-shadow: 0 0 40px rgba(200, 139, 50, 0.15);
+            box-shadow: 0 0 40px rgba(200, 139, 50, 0.25), inset 0 0 30px rgba(0, 0, 0, 0.5);
             font-size: clamp(0.85rem, 1.2vw, 1rem);
             line-height: 1.7;
+            z-index: 10;
         }
 
         .contenido-zona-oculta h2,
         .contenido-zona-oculta p,
         #iniciar-exploracion {
             opacity: 0;
+            position: relative;
+            z-index: 25;
         }
 
         .contenido-zona-oculta::-webkit-scrollbar { width: 8px; }
@@ -141,6 +170,8 @@
         .contenedor-enlace-final {
             text-align: right;
             margin-top: 3rem;
+            position: relative;
+            z-index: 25;
         }
 
         #iniciar-exploracion {
@@ -212,7 +243,8 @@
     </div>
 
     <div id="modal-zona-oculta">
-        <div class="contenido-zona-oculta">
+        <!-- Contenedor equipado con Quimeratrix.webp de fondo y efecto CRT sin oscurecimiento de bordes -->
+        <div class="contenido-zona-oculta crt-screen-effect">
             <h2 class="titulo-oculto">HAS ENCONTRADO LA ZONA OCULTA DE QUIMERA.</h2>
             
             <p>¡FELICIDADES, NAVEGANTE!</p>
