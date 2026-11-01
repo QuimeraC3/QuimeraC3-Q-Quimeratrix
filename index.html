@@ -41,10 +41,93 @@
             height: 100%;
             pointer-events: none;
             z-index: 20;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.015), rgba(0, 0, 255, 0.04));
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.45) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
             background-size: 100% 3px, 6px 100%;
-            opacity: 0.8;
+            opacity: 0.85;
             border-radius: inherit;
+        }
+
+        /* RETROILUMINACIÓN RGB HOLOGRÁFICA TRIDIMENSIONAL PERMANENTE */
+        @keyframes hologramBoxGlow {
+            0% { box-shadow: 0 0 15px rgba(56, 189, 248, 0.4), 0 0 30px rgba(15, 118, 110, 0.3), 0 20px 25px -5px rgba(0, 0, 0, 0.5); }
+            50% { box-shadow: 0 0 32px rgba(56, 189, 248, 0.95), 0 0 65px rgba(56, 189, 248, 0.65), 0 0 85px rgba(200, 139, 50, 0.55), 0 20px 25px -5px rgba(0, 0, 0, 0.5); }
+            100% { box-shadow: 0 0 15px rgba(56, 189, 248, 0.4), 0 0 30px rgba(15, 118, 110, 0.3), 0 20px 25px -5px rgba(0, 0, 0, 0.5); }
+        }
+
+        .hologram-glow-box {
+            animation: hologramBoxGlow 3s ease-in-out infinite alternate;
+        }
+
+        /* EFECTO LÁSER BARRIDO HORIZONTAL (0.6s) */
+        .laser-burn-effect {
+            opacity: 0;
+            clip-path: inset(0 100% 0 0);
+            position: relative;
+        }
+
+        .laser-burn-effect.active-laser {
+            opacity: 1;
+            animation: hyperLaserReveal 0.6s cubic-bezier(0.15, 1, 0.2, 1) forwards;
+        }
+
+        .laser-burn-effect.revealed {
+            opacity: 1;
+            clip-path: inset(0 0 0 0);
+        }
+
+        .laser-burn-effect.active-laser::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            bottom: -30px;
+            left: 0;
+            width: 16px;
+            background: radial-gradient(circle, #ffffff 0%, #38bdf8 40%, #c88b32 80%, transparent 100%);
+            box-shadow: 0 0 35px #38bdf8, 0 0 70px #fffbeb, 0 0 100px #c88b32, inset 0 0 15px #ffffff;
+            animation: hyperLaserBarMove 0.6s cubic-bezier(0.15, 1, 0.2, 1) forwards;
+            z-index: 30;
+            filter: blur(0.5px);
+        }
+
+        .laser-burn-effect.active-laser::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            bottom: -10px;
+            left: 0;
+            right: 0;
+            height: 120%;
+            pointer-events: none;
+            background: linear-gradient(90deg, rgba(255,255,255,0.9) 0%, rgba(56,189,248,0.6) 30%, rgba(200,139,50,0.3) 60%, transparent 100%);
+            mix-blend-mode: color-dodge;
+            animation: hyperLaserSparksWave 0.6s cubic-bezier(0.15, 1, 0.2, 1) forwards;
+            z-index: 25;
+        }
+
+        @keyframes hyperLaserReveal {
+            0% {
+                clip-path: inset(0 100% 0 0);
+                filter: brightness(4) contrast(200%) drop-shadow(0 0 30px rgba(56, 189, 248, 1));
+            }
+            50% {
+                filter: brightness(2.5) contrast(150%) drop-shadow(0 0 15px rgba(200, 139, 50, 0.9));
+            }
+            100% {
+                clip-path: inset(0 0 0 0);
+                filter: brightness(1) contrast(100%) drop-shadow(0 0 0px transparent);
+            }
+        }
+
+        @keyframes hyperLaserBarMove {
+            0% { left: 0%; opacity: 1; transform: scaleY(1.8) skewX(-15deg); }
+            50% { transform: scaleY(2.2) skewX(5deg); }
+            90% { opacity: 1; }
+            100% { left: 100%; opacity: 0; transform: scaleY(0.5) skewX(0deg); }
+        }
+
+        @keyframes hyperLaserSparksWave {
+            0% { opacity: 1; clip-path: inset(0 100% 0 0); }
+            100% { opacity: 0; clip-path: inset(0 0 0 0); }
         }
 
         /* Lienzo Matrix */
@@ -120,7 +203,7 @@
             transform: scale(0, 0.01); 
         }
 
-        /* Contenedor con imagen posterior Quimeratrix.webp */
+        /* Contenedor con imagen posterior Quimeratrix.webp y luz RGB */
         .contenido-zona-oculta {
             position: relative;
             background-image: linear-gradient(rgba(11, 19, 41, 0.88), rgba(11, 19, 41, 0.88)), url('Quimeratrix.webp');
@@ -134,7 +217,6 @@
             max-height: 85vh;
             overflow-y: auto;
             color: #ffffff;
-            box-shadow: 0 0 40px rgba(200, 139, 50, 0.25), inset 0 0 30px rgba(0, 0, 0, 0.5);
             font-size: clamp(0.85rem, 1.2vw, 1rem);
             line-height: 1.7;
             z-index: 10;
@@ -143,7 +225,6 @@
         .contenido-zona-oculta h2,
         .contenido-zona-oculta p,
         #iniciar-exploracion {
-            opacity: 0;
             position: relative;
             z-index: 25;
         }
@@ -160,11 +241,13 @@
             text-align: center;
             text-transform: uppercase;
             letter-spacing: 0.1em;
+            text-shadow: 0 0 15px rgba(200, 139, 50, 0.8);
         }
 
         .contenido-zona-oculta p {
             margin-bottom: 1.2rem;
             color: #ffffff;
+            text-shadow: 0 0 8px rgba(0, 0, 0, 0.9);
         }
 
         .contenedor-enlace-final {
@@ -243,54 +326,54 @@
     </div>
 
     <div id="modal-zona-oculta">
-        <!-- Contenedor equipado con Quimeratrix.webp de fondo y efecto CRT sin oscurecimiento de bordes -->
-        <div class="contenido-zona-oculta crt-screen-effect">
-            <h2 class="titulo-oculto">HAS ENCONTRADO LA ZONA OCULTA DE QUIMERA.</h2>
+        <!-- Contenedor con Quimeratrix.webp, Scanlines CRT y Luz Holográfica RGB posterior -->
+        <div class="contenido-zona-oculta crt-screen-effect hologram-glow-box">
+            <h2 class="titulo-oculto laser-burn-effect">HAS ENCONTRADO LA ZONA OCULTA DE QUIMERA.</h2>
             
-            <p>¡FELICIDADES, NAVEGANTE!</p>
-            <p>Si estás leyendo este mensaje, significa que has encontrado uno de los accesos ocultos del ecosistema QUIMERA.</p>
-            <p>No todos los caminos están señalizados. Algunos deben descubrirse.</p>
-            <p>Has llegado a un espacio concebido para quienes sienten curiosidad por mirar un poco más allá de lo evidente. Aquí comienza una experiencia distinta de navegación: más inmersiva, más exploratoria y quizá, un poco más enigmática.</p>
+            <p class="laser-burn-effect">¡FELICIDADES, NAVEGANTE!</p>
+            <p class="laser-burn-effect">Si estás leyendo este mensaje, significa que has encontrado uno de los accesos ocultos del ecosistema QUIMERA.</p>
+            <p class="laser-burn-effect">No todos los caminos están señalizados. Algunos deben descubrirse.</p>
+            <p class="laser-burn-effect">Has llegado a un espacio concebido para quienes sienten curiosidad por mirar un poco más allá de lo evidente. Aquí comienza una experiencia distinta de navegación: más inmersiva, más exploratoria y quizá, un poco más enigmática.</p>
 
-            <p><strong>ANTES DE CONTINUAR…</strong><br>
+            <p class="laser-burn-effect"><strong>ANTES DE CONTINUAR…</strong><br>
             Para disfrutar plenamente de esta experiencia, te recomendamos:</p>
 
-            <p>◈ <strong>Activar la pantalla completa:</strong><br>
+            <p class="laser-burn-effect">◈ <strong>Activar la pantalla completa:</strong><br>
             Para tu computadora de escritorio, presiona F11 en tu teclado para ampliar el espacio de navegación y favorecer una experiencia más inmersiva.</p>
 
-            <p>◈ <strong>Enciende la música:</strong><br>
+            <p class="laser-burn-effect">◈ <strong>Enciende la música:</strong><br>
             Utiliza el botón de música para escuchar el soundtrack del Instituto QUIMERA.<br>
             La música no está aquí por accidente: forma parte de la atmósfera de este espacio.</p>
 
-            <p>◈ <strong>Explora sin prisa:</strong><br>
+            <p class="laser-burn-effect">◈ <strong>Explora sin prisa:</strong><br>
             Observa los textos, imágenes, símbolos y elementos interactivos. Algunos caminos pueden conducir a lugares que no aparecen a primera vista.</p>
 
-            <p>◈ <strong>Haz clic. Investiga. Regresa.</strong><br>
+            <p class="laser-burn-effect">◈ <strong>Haz clic. Investiga. Regresa.</strong><br>
             QUIMERA está diseñado para ser recorrido, no simplemente consultado. Si algo despierta tu curiosidad, síguelo.</p>
 
-            <p>◈ <strong>Presta atención a los detalles:</strong><br>
+            <p class="laser-burn-effect">◈ <strong>Presta atención a los detalles:</strong><br>
             En este ecosistema, algunos elementos cumplen más de una función. Lo que parece ornamental podría ser una pista. Lo que parece una pista podría conducir a otra.</p>
 
-            <p><strong>Y SOBRE TODO…</strong><br>
+            <p class="laser-burn-effect"><strong>Y SOBRE TODO…</strong><br>
             No dejes de buscar.</p>
 
-            <p>QUIMERA guarda fragmentos de su propia historia en lugares que no siempre se anuncian.<br>
+            <p class="laser-burn-effect">QUIMERA guarda fragmentos de su propia historia en lugares que no siempre se anuncian.<br>
             Algunos fragmentos de QUIMERA no se encuentran en los caminos principales: hay que descubrirlos.</p>
 
-            <p>Si has llegado hasta aquí, ya has demostrado que sabes encontrar lo que permanece oculto.</p>
+            <p class="laser-burn-effect">Si has llegado hasta aquí, ya has demostrado que sabes encontrar lo que permanece oculto.</p>
 
-            <p>Ahora comienza la verdadera exploración. Continúa recorriendo el ecosistema. Sigue las pistas. Descubre los símbolos. Encuentra los caminos que no aparecen en el mapa.</p>
+            <p class="laser-burn-effect">Ahora comienza la verdadera exploración. Continúa recorriendo el ecosistema. Sigue las pistas. Descubre los símbolos. Encuentra los caminos que no aparecen en el mapa.</p>
 
-            <p>Porque detrás de QUIMERA existe una historia. Una historia que espera ser descubierta.</p>
+            <p class="laser-burn-effect">Porque detrás de QUIMERA existe una historia. Una historia que espera ser descubierta.</p>
 
-            <p>¿Serás capaz de encontrarla?</p>
+            <p class="laser-burn-effect">¿Serás capaz de encontrarla?</p>
 
-            <p>La exploración apenas comienza...</p>
+            <p class="laser-burn-effect">La exploración apenas comienza...</p>
 
-            <p>BIENVENIDOS A LA ZONA OCULTA DE QUIMERA</p>
+            <p class="laser-burn-effect">BIENVENIDOS A LA ZONA OCULTA DE QUIMERA</p>
 
             <div class="contenedor-enlace-final">
-                <a href="https://quimerac3.github.io/QuimeraC3-Q/" id="iniciar-exploracion">COMENZAR LA EXPLORACIÓN.</a>
+                <a href="https://quimerac3.github.io/QuimeraC3-Q/" id="iniciar-exploracion" class="laser-burn-effect">COMENZAR LA EXPLORACIÓN.</a>
             </div>
         </div>
     </div>
@@ -348,113 +431,36 @@
 
         window.addEventListener('resize', initMatrix);
 
-        // MOTOR MÁQUINA DE ESCRIBIR MATRIX
-        function mecaEscribirMatrix(elemento, velocidad = 10, alTerminar = null) {
-            const textoOriginal = elemento.innerHTML;
-            elemento.innerHTML = '';
-            elemento.style.opacity = '1';
-
-            const glifos = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピ0123456789AZ';
+        // SECUENCIA DE REVELADO LÁSER SECUENCIAL
+        async function iniciarEscrituraLaser() {
+            const elementos = Array.from(document.querySelectorAll('.contenido-zona-oculta .laser-burn-effect'));
             
-            const tokens = [];
-            let tagStack = '';
-            let insideTag = false;
-
-            for (let char of textoOriginal) {
-                if (char === '<') {
-                    insideTag = true;
-                    tagStack += char;
-                } else if (char === '>') {
-                    insideTag = false;
-                    tagStack += char;
-                    tokens.push({ type: 'tag', value: tagStack });
-                    tagStack = '';
-                } else if (insideTag) {
-                    tagStack += char;
-                } else {
-                    tokens.push({ type: 'char', value: char });
-                }
+            for (let el of elementos) {
+                el.classList.add('active-laser');
+                await new Promise(r => setTimeout(r, 180));
             }
 
-            let tokenIndex = 0;
-            let htmlAcumulado = '';
+            await new Promise(r => setTimeout(r, 600));
 
-            function escribirSiguiente() {
-                if (tokenIndex >= tokens.length) {
-                    elemento.innerHTML = textoOriginal;
-                    if (alTerminar) alTerminar();
-                    return;
-                }
-
-                const currentToken = tokens[tokenIndex];
-
-                if (currentToken.type === 'tag') {
-                    htmlAcumulado += currentToken.value;
-                    elemento.innerHTML = htmlAcumulado;
-                    tokenIndex++;
-                    escribirSiguiente();
-                } else {
-                    let ciclosMatrix = 0;
-                    const charReal = currentToken.value;
-
-                    if (charReal === ' ' || charReal === '\n' || charReal === '\r') {
-                        htmlAcumulado += charReal;
-                        elemento.innerHTML = htmlAcumulado;
-                        tokenIndex++;
-                        setTimeout(escribirSiguiente, velocidad);
-                    } else {
-                        const intervalMatrix = setInterval(() => {
-                            const glifoRandom = glifos.charAt(Math.floor(Math.random() * glifos.length));
-                            elemento.innerHTML = htmlAcumulado + `<span style="color: var(--accent); font-weight: bold;">${glifoRandom}</span>`;
-                            ciclosMatrix++;
-
-                            if (ciclosMatrix >= 2) { 
-                                clearInterval(intervalMatrix);
-                                htmlAcumulado += charReal;
-                                elemento.innerHTML = htmlAcumulado;
-                                tokenIndex++;
-                                setTimeout(escribirSiguiente, velocidad);
-                            }
-                        }, 5);
-                    }
-                }
+            for (let el of elementos) {
+                el.classList.remove('active-laser');
+                el.classList.add('revealed');
             }
 
-            escribirSiguiente();
-        }
-
-        function iniciarEscrituraModalMatrix() {
-            const elementos = Array.from(document.querySelectorAll('.contenido-zona-oculta h2, .contenido-zona-oculta p'));
-            let index = 0;
-
-            function procesarSiguiente() {
-                if (index < elementos.length) {
-                    const el = elementos[index];
-                    index++;
-                    mecaEscribirMatrix(el, 4, procesarSiguiente);
-                } else {
-                    const btn = document.getElementById('iniciar-exploracion');
-                    if (btn) {
-                        btn.classList.remove('active-wave');
-                        btn.textContent = 'COMENZAR LA EXPLORACIÓN.';
-                        
-                        mecaEscribirMatrix(btn, 25, function() {
-                            const texto = btn.textContent;
-                            btn.innerHTML = '';
-                            [...texto].forEach((char, idx) => {
-                                const span = document.createElement('span');
-                                span.className = 'exploracion-letter';
-                                span.textContent = char;
-                                span.style.animationDelay = `${idx * 80.85}ms`;
-                                btn.appendChild(span);
-                            });
-                            btn.classList.add('active-wave');
-                        });
-                    }
-                }
+            // Iniciar animación de onda cromática en el botón final
+            const btn = document.getElementById('iniciar-exploracion');
+            if (btn) {
+                const texto = btn.textContent;
+                btn.innerHTML = '';
+                [...texto].forEach((char, idx) => {
+                    const span = document.createElement('span');
+                    span.className = 'exploracion-letter';
+                    span.textContent = char;
+                    span.style.animationDelay = `${idx * 80.85}ms`;
+                    btn.appendChild(span);
+                });
+                btn.classList.add('active-wave');
             }
-
-            procesarSiguiente();
         }
 
         // CONTROLES DE AUDIO Y PANTALLA COMPLETA
@@ -507,8 +513,8 @@
                     if (controlsBar) {
                         controlsBar.classList.add('tv-turn-on');
                     }
-                    setTimeout(iniciarEscrituraModalMatrix, 700);
-                }, 2500);
+                    setTimeout(iniciarEscrituraLaser, 700);
+                }, 1200);
 
             }, 800);
         }
@@ -533,7 +539,6 @@
                 overlay.style.backgroundColor = '#ffffff';
                 overlay.style.opacity = '1';
                 setTimeout(() => {
-                    // Reemplaza esta vista en la pila del historial
                     window.location.replace(ECOSYSTEM_URL);
                 }, 1000);
             }, 600);
