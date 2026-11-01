@@ -488,12 +488,12 @@
         <div class="contenido-descifrador crt-screen-effect hologram-glow-box">
             <div class="modal-scroll-wrapper">
                 <h2 class="titulo-oculto">DESENCRIPTA LA CONTRASEÑA</h2>
-                <p style="color: #ffffff; font-weight: 700; margin-bottom: 1rem;" id="descifrador-subtitle">Fase 1: Haz clic en cada recuadro superior para revelar el banco de glifos:</p>
+                <p style="color: #ffffff; font-weight: 700; margin-bottom: 1rem;" id="descifrador-subtitle">Fase 1: Haz clic en cada recuadro superior para revelar el CRIPTEX:</p>
 
-                <div class="glyphs-section-title">Banco de Glifos (Descubre los 7 glifos):</div>
+                <div class="glyphs-section-title">CRIPTEX (Descubre los 7 glifos):</div>
                 <div class="glyphs-wrapper" id="source-glyphs-container"></div>
 
-                <div class="glyphs-section-title" style="margin-top: 1rem;">INTRODUCE LA CONTRASEÑA:</div>
+                <div class="glyphs-section-title" style="margin-top: 1rem;">CODEX - INTRODUCE LA CONTRASEÑA:</div>
                 <div class="glyphs-wrapper" id="target-glyphs-container"></div>
 
                 <div style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
@@ -661,7 +661,7 @@
         function initGlifosPuzzle() {
             sourceRevealed = Array(7).fill(false);
             currentState = Array(7).fill(null);
-            subtitleElem.textContent = "Fase 1: Haz clic en cada recuadro superior para revelar el banco de glifos:";
+            subtitleElem.textContent = "Fase 1: En la zona del CRIPTEX, haz clic en cada recuadro superior para revelar el banco de glifos:";
             subtitleElem.style.color = "#ffffff";
             startSourceMatrixIntervals();
             renderPuzzle();
@@ -736,8 +736,8 @@
             renderPuzzle();
 
             if (sourceRevealed.every(Boolean)) {
-                subtitleElem.textContent = "Fase 2: Selecciona cada letra y organiza la palabra que será la contraseña:";
-                subtitleElem.style.color = "#38bdf8";
+                subtitleElem.textContent = "Fase 2: Selecciona cada letra y organiza la palabra que será la contraseña a colocar en la zona del CODEX:";
+                subtitleElem.style.color = "#ffffff";
             }
         }
 
