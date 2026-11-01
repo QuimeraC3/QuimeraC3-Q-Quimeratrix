@@ -199,8 +199,8 @@
             background: var(--accent);
         }
 
-        /* Modal Zona Oculta */
-        #modal-zona-oculta {
+        /* Modal Zona Oculta y Modal Descifrador */
+        #modal-zona-oculta, #modal-descifrador {
             position: fixed;
             top: 0;
             left: 0;
@@ -232,6 +232,19 @@
             z-index: 10;
         }
 
+        /* Contenedor específico para el Descifrador de Glifos (Fondo oscuro puro estilo terminal) */
+        .contenido-descifrador {
+            position: relative;
+            background: rgba(11, 19, 41, 0.92);
+            border: 1.5px solid var(--accent);
+            border-radius: 12px;
+            width: 85vw;
+            max-width: 750px;
+            color: #ffffff;
+            text-align: center;
+            z-index: 10;
+        }
+
         .titulo-oculto {
             color: #fef384;
             font-family: Georgia, "Times New Roman", serif;
@@ -242,7 +255,7 @@
             text-transform: uppercase;
             letter-spacing: 0.1em;
             text-shadow: 0 0 15px rgba(200, 139, 50, 0.8);
-            -webkit-text-stroke: 1.5px #000000; /* Delineado negro a 1.5 en encabezado */
+            -webkit-text-stroke: 1.5px #000000;
         }
 
         .contenido-zona-oculta p {
@@ -251,7 +264,7 @@
             font-weight: 700;
             font-size: clamp(1.0rem, 2.5vw, 1.5rem);
             text-shadow: 0 0 8px rgba(0, 0, 0, 0.9);
-            -webkit-text-stroke: 0.5px #000000; /* Delineado negro a 0.5 en texto */
+            -webkit-text-stroke: 0.5px #000000;
         }
 
         .contenedor-enlace-final {
@@ -269,7 +282,8 @@
             color: #ffffff;
             transition: opacity 500ms ease;
             display: inline-block;
-            -webkit-text-stroke: 0.5px #000000; /* Delineado negro a 0.5 en botón final */
+            cursor: pointer;
+            -webkit-text-stroke: 0.5px #000000;
         }
 
         .exploracion-letter {
@@ -292,6 +306,54 @@
 
         #iniciar-exploracion.active-wave .exploracion-letter {
             animation: quimeraSequentialWave 2.264s infinite linear;
+        }
+
+        /* ESTILOS DEL DESCIFRADOR DE GLIFOS */
+        .glyphs-wrapper {
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .glyph-box {
+            width: clamp(45px, 8vw, 65px);
+            height: clamp(60px, 10vw, 85px);
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid rgba(200, 139, 50, 0.6);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: monospace;
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: bold;
+            color: var(--accent);
+            cursor: pointer;
+            user-select: none;
+            transition: border-color 0.3s, transform 0.2s, box-shadow 0.3s;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.9);
+            -webkit-text-stroke: 0.5px #000000;
+        }
+
+        .glyph-box:hover {
+            border-color: #38bdf8;
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+        }
+
+        .glyph-box.locked {
+            border-color: #ffffff;
+            color: #ffffff;
+            background: rgba(200, 139, 50, 0.4);
+            text-shadow: 0 0 10px #ffffff, 0 0 20px var(--accent);
+            animation: pulseSuccess 0.5s ease-out;
+        }
+
+        @keyframes pulseSuccess {
+            0% { transform: scale(1.15); }
+            100% { transform: scale(1); }
         }
 
         /* Animación TV Encendiéndose */
@@ -330,8 +392,8 @@
         <button class="btn-control" id="fullscreen-toggle">⛶ Pantalla Completa</button>
     </div>
 
+    <!-- MODAL 1: QUIMERATRIX -->
     <div id="modal-zona-oculta">
-        <!-- Contenedor con Quimeratrix.webp, Scanlines CRT de ancho total y Luz Holográfica RGB posterior -->
         <div class="contenido-zona-oculta crt-screen-effect hologram-glow-box">
             <div class="modal-scroll-wrapper">
                 <h2 class="titulo-oculto laser-burn-effect">HAS ENCONTRADO LA ZONA OCULTA DE QUIMERA.</h2>
@@ -355,7 +417,7 @@
                 Observa los textos, imágenes, símbolos y elementos interactivos. Algunos caminos pueden conducir a lugares que no aparecen a primera vista.</p>
 
                 <p class="laser-burn-effect">◈ <strong>Haz clic. Investiga. Regresa.</strong><br>
-                QUIMERA está diseñado para ser recorrido, no simplemente consultado. Si algo despierta tu curiosidad, síguelo.</p>
+                QUIMERATRIX está diseñado para ser recorrido, no simplemente consultado. Si algo despierta tu curiosidad, síguelo.</p>
 
                 <p class="laser-burn-effect">◈ <strong>Presta atención a los detalles:</strong><br>
                 En este ecosistema, algunos elementos cumplen más de una función. Lo que parece ornamental podría ser una pista. Lo que parece una pista podría conducir a otra.</p>
@@ -379,7 +441,31 @@
                 <p class="laser-burn-effect">BIENVENIDOS A LA ZONA OCULTA DE QUIMERA</p>
 
                 <div class="contenedor-enlace-final">
-                    <a href="https://quimerac3.github.io/QuimeraC3-Q/" id="iniciar-exploracion" class="laser-burn-effect">COMENZAR LA EXPLORACIÓN.</a>
+                    <a href="#" id="iniciar-exploracion" class="laser-burn-effect">COMENZAR LA EXPLORACIÓN.</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: DESCIFRADOR DE GLIFOS (RITUAL DE DESCOMPILACIÓN) -->
+    <div id="modal-descifrador">
+        <div class="contenido-descifrador crt-screen-effect hologram-glow-box">
+            <div class="modal-scroll-wrapper">
+                <h2 class="titulo-oculto">RITUAL DE DESCOMPILACIÓN</h2>
+                <p style="color: #ffffff; font-weight: 700; margin-bottom: 1.5rem;" id="descifrador-subtitle">Haz clic en cada glifo para alinear la secuencia secreta del ecosistema:</p>
+
+                <div class="glyphs-wrapper" id="glyphs-container">
+                    <div class="glyph-box" data-index="0" data-target="Q">?</div>
+                    <div class="glyph-box" data-index="1" data-target="U">?</div>
+                    <div class="glyph-box" data-index="2" data-target="I">?</div>
+                    <div class="glyph-box" data-index="3" data-target="M">?</div>
+                    <div class="glyph-box" data-index="4" data-target="E">?</div>
+                    <div class="glyph-box" data-index="5" data-target="R">?</div>
+                    <div class="glyph-box" data-index="6" data-target="A">?</div>
+                </div>
+
+                <div style="margin-top: 2rem;">
+                    <button class="btn-control" id="btn-auto-solve" style="padding: 0.6rem 1.5rem; font-size: 0.95rem;">CALIBRACIÓN AUTOMÁTICA</button>
                 </div>
             </div>
         </div>
@@ -440,7 +526,7 @@
 
         // SECUENCIA DE REVELADO LÁSER SECUENCIAL
         async function iniciarEscrituraLaser() {
-            const elementos = Array.from(document.querySelectorAll('.contenido-zona-oculta .laser-burn-effect'));
+            const elementos = Array.from(document.querySelectorAll('#modal-zona-oculta .laser-burn-effect'));
             
             for (let el of elementos) {
                 el.classList.add('active-laser');
@@ -526,28 +612,94 @@
             }, 800);
         }
 
-        // REDIRECCIÓN CONTROLADA (Elimina Quimeratrix del historial)
+        // LÓGICA DEL DESCIFRADOR DE GLIFOS
+        const targetWord = "QUIMERA";
+        const glyphBoxes = document.querySelectorAll('.glyph-box');
+        let lockedCount = 0;
+        let glyphIntervals = [];
+
+        function iniciarGlifos() {
+            glyphBoxes.forEach((box, idx) => {
+                const interval = setInterval(() => {
+                    if (!box.classList.contains('locked')) {
+                        const randomChar = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                        box.textContent = randomChar;
+                    }
+                }, 60);
+                glyphIntervals.push(interval);
+
+                box.onclick = () => lockGlyph(box, idx);
+            });
+        }
+
+        function lockGlyph(box, index) {
+            if (box.classList.contains('locked')) return;
+
+            clearInterval(glyphIntervals[index]);
+            box.textContent = targetWord[index];
+            box.classList.add('locked');
+            lockedCount++;
+
+            if (lockedCount === targetWord.length) {
+                triggerAccessGranted();
+            }
+        }
+
+        document.getElementById('btn-auto-solve').addEventListener('click', () => {
+            glyphBoxes.forEach((box, idx) => {
+                setTimeout(() => {
+                    lockGlyph(box, idx);
+                }, idx * 180);
+            });
+        });
+
+        function triggerAccessGranted() {
+            const subtitle = document.getElementById('descifrador-subtitle');
+            subtitle.textContent = "¡SECUENCIA CORRECTA! ACCESO CONCEDIDO AL ECOSISTEMA.";
+            subtitle.style.color = "#fef384";
+            subtitle.style.fontWeight = "bold";
+
+            const modalDescifrador = document.getElementById('modal-descifrador');
+            const controlsBar = document.querySelector('.controls-bar');
+            const overlay = document.getElementById('intro-overlay');
+
+            setTimeout(() => {
+                // Animación de salida (apagado de televisión antigua estándar del index)
+                modalDescifrador.classList.remove('tv-turn-on');
+                modalDescifrador.classList.add('tv-turn-off');
+
+                if (controlsBar) {
+                    controlsBar.classList.remove('tv-turn-on');
+                    controlsBar.classList.add('tv-turn-off');
+                }
+
+                setTimeout(() => {
+                    matrixCanvas.style.opacity = '0';
+                    overlay.style.backgroundColor = '#ffffff';
+                    overlay.style.opacity = '1';
+                    setTimeout(() => {
+                        window.location.replace(ECOSYSTEM_URL);
+                    }, 1000);
+                }, 600);
+            }, 1200);
+        }
+
+        // TRANSICIÓN DE QUIMERATRIX AL DESCIFRADOR DE GLIFOS
         document.getElementById('iniciar-exploracion').addEventListener('click', function(e) {
             e.preventDefault();
             const modalOculto = document.getElementById('modal-zona-oculta');
-            const controlsBar = document.querySelector('.controls-bar');
-            const overlay = document.getElementById('intro-overlay');
             
+            // Apagado de TV para Quimeratrix
             modalOculto.classList.remove('tv-turn-on');
             modalOculto.classList.add('tv-turn-off');
 
-            if (controlsBar) {
-                controlsBar.classList.remove('tv-turn-on');
-                controlsBar.classList.add('tv-turn-off');
-            }
-
             setTimeout(() => {
-                matrixCanvas.style.opacity = '0';
-                overlay.style.backgroundColor = '#ffffff';
-                overlay.style.opacity = '1';
-                setTimeout(() => {
-                    window.location.replace(ECOSYSTEM_URL);
-                }, 1000);
+                modalOculto.style.display = 'none';
+
+                // Encendido de TV invertido / de entrada para el descifrador de glifos
+                const modalDescifrador = document.getElementById('modal-descifrador');
+                modalDescifrador.classList.add('tv-turn-on');
+                iniciarGlifos();
             }, 600);
         });
 
