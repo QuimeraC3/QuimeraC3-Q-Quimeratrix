@@ -232,10 +232,12 @@
             z-index: 10;
         }
 
-        /* Contenedor específico para el Descifrador de Glifos (Fondo oscuro puro estilo terminal) */
+        /* Contenedor específico para el Descifrador de Glifos (con Quimeratrix.webp de fondo) */
         .contenido-descifrador {
             position: relative;
-            background: rgba(11, 19, 41, 0.92);
+            background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url('Quimeratrix.webp');
+            background-size: cover;
+            background-position: center center;
             border: 1.5px solid var(--accent);
             border-radius: 12px;
             width: 85vw;
@@ -481,7 +483,7 @@
         </div>
     </div>
 
-    <!-- MODAL 2: DESCIFRADOR DE GLIFOS AVANZADO CON CÓDIGO MATRIX -->
+    <!-- MODAL 2: DESCIFRADOR DE GLIFOS AVANZADO CON CÓDIGO MATRIX Y IMAGEN QUIMERATRIX -->
     <div id="modal-descifrador">
         <div class="contenido-descifrador crt-screen-effect hologram-glow-box">
             <div class="modal-scroll-wrapper">
