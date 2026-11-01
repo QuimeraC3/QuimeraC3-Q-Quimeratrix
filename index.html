@@ -308,18 +308,27 @@
             animation: quimeraSequentialWave 2.264s infinite linear;
         }
 
-        /* ESTILOS DEL DESCIFRADOR DE GLIFOS */
+        /* ESTILOS DEL DESCIFRADOR DE GLIFOS AVANZADO */
+        .glyphs-section-title {
+            font-size: 0.85rem;
+            color: #38bdf8;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: bold;
+        }
+
         .glyphs-wrapper {
             display: flex;
             justify-content: center;
-            gap: 0.8rem;
-            margin: 2rem 0;
+            gap: 0.6rem;
+            margin: 0.8rem 0 1.5rem 0;
             flex-wrap: wrap;
         }
 
         .glyph-box {
-            width: clamp(45px, 8vw, 65px);
-            height: clamp(60px, 10vw, 85px);
+            width: clamp(40px, 7vw, 55px);
+            height: clamp(55px, 9vw, 75px);
             background: rgba(0, 0, 0, 0.8);
             border: 2px solid rgba(200, 139, 50, 0.6);
             border-radius: 8px;
@@ -327,33 +336,58 @@
             justify-content: center;
             align-items: center;
             font-family: monospace;
-            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-size: clamp(1.5rem, 3.5vw, 2.2rem);
             font-weight: bold;
             color: var(--accent);
             cursor: pointer;
             user-select: none;
-            transition: border-color 0.3s, transform 0.2s, box-shadow 0.3s;
+            transition: all 0.2s ease;
             box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.9);
             -webkit-text-stroke: 0.5px #000000;
         }
 
-        .glyph-box:hover {
+        .glyph-box:hover:not(.used) {
             border-color: #38bdf8;
             transform: translateY(-2px);
             box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
         }
 
-        .glyph-box.locked {
-            border-color: #ffffff;
-            color: #ffffff;
-            background: rgba(200, 139, 50, 0.4);
-            text-shadow: 0 0 10px #ffffff, 0 0 20px var(--accent);
-            animation: pulseSuccess 0.5s ease-out;
+        .glyph-box.used {
+            opacity: 0.3;
+            cursor: not-allowed;
+            border-color: rgba(255, 255, 255, 0.1);
         }
 
-        @keyframes pulseSuccess {
-            0% { transform: scale(1.15); }
-            100% { transform: scale(1); }
+        .target-box {
+            width: clamp(40px, 7vw, 55px);
+            height: clamp(55px, 9vw, 75px);
+            background: rgba(11, 19, 41, 0.9);
+            border: 2px dashed rgba(56, 189, 248, 0.6);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: monospace;
+            font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+            font-weight: bold;
+            color: #ffffff;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.9);
+            -webkit-text-stroke: 0.5px #000000;
+        }
+
+        .target-box.filled {
+            border-style: solid;
+            border-color: var(--accent);
+            background: rgba(200, 139, 50, 0.3);
+            color: #fef384;
+            text-shadow: 0 0 10px var(--accent);
+        }
+
+        .target-box:hover.filled {
+            border-color: #ef4444;
         }
 
         /* Animación TV Encendiéndose */
@@ -447,25 +481,22 @@
         </div>
     </div>
 
-    <!-- MODAL 2: DESCIFRADOR DE GLIFOS (RITUAL DE DESCOMPILACIÓN) -->
+    <!-- MODAL 2: DESCIFRADOR DE GLIFOS AVANZADO (AEIUMQR -> QUIMERA) -->
     <div id="modal-descifrador">
         <div class="contenido-descifrador crt-screen-effect hologram-glow-box">
             <div class="modal-scroll-wrapper">
                 <h2 class="titulo-oculto">RITUAL DE DESCOMPILACIÓN</h2>
-                <p style="color: #ffffff; font-weight: 700; margin-bottom: 1.5rem;" id="descifrador-subtitle">Haz clic en cada glifo para alinear la secuencia secreta del ecosistema:</p>
+                <p style="color: #ffffff; font-weight: 700; margin-bottom: 1rem;" id="descifrador-subtitle">Selecciona los glifos en el orden correcto para ensamblar la clave:</p>
 
-                <div class="glyphs-wrapper" id="glyphs-container">
-                    <div class="glyph-box" data-index="0" data-target="Q">?</div>
-                    <div class="glyph-box" data-index="1" data-target="U">?</div>
-                    <div class="glyph-box" data-index="2" data-target="I">?</div>
-                    <div class="glyph-box" data-index="3" data-target="M">?</div>
-                    <div class="glyph-box" data-index="4" data-target="E">?</div>
-                    <div class="glyph-box" data-index="5" data-target="R">?</div>
-                    <div class="glyph-box" data-index="6" data-target="A">?</div>
-                </div>
+                <div class="glyphs-section-title">Banco de Glifos (AEIUMQR):</div>
+                <div class="glyphs-wrapper" id="source-glyphs-container"></div>
 
-                <div style="margin-top: 2rem;">
-                    <button class="btn-control" id="btn-auto-solve" style="padding: 0.6rem 1.5rem; font-size: 0.95rem;">CALIBRACIÓN AUTOMÁTICA</button>
+                <div class="glyphs-section-title" style="margin-top: 1rem;">Secuencia de Ensamblaje (QUIMERA):</div>
+                <div class="glyphs-wrapper" id="target-glyphs-container"></div>
+
+                <div style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn-control" id="btn-reset" style="padding: 0.6rem 1.2rem; font-size: 0.9rem;">RESETEAR SECUENCIA</button>
+                    <button class="btn-control" id="btn-auto-solve" style="padding: 0.6rem 1.2rem; font-size: 0.9rem;">CALIBRACIÓN AUTOMÁTICA</button>
                 </div>
             </div>
         </div>
@@ -612,46 +643,113 @@
             }, 800);
         }
 
-        // LÓGICA DEL DESCIFRADOR DE GLIFOS
+        // LÓGICA DEL DESCIFRADOR DE GLIFOS AVANZADO (AEIUMQR -> QUIMERA)
         const targetWord = "QUIMERA";
-        const glyphBoxes = document.querySelectorAll('.glyph-box');
-        let lockedCount = 0;
-        let glyphIntervals = [];
+        const sourceLetters = ['A', 'E', 'I', 'U', 'M', 'Q', 'R']; // Orden AEIUMQR
+        let currentState = Array(7).fill(null);
 
-        function iniciarGlifos() {
-            glyphBoxes.forEach((box, idx) => {
-                const interval = setInterval(() => {
-                    if (!box.classList.contains('locked')) {
-                        const randomChar = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
-                        box.textContent = randomChar;
-                    }
-                }, 60);
-                glyphIntervals.push(interval);
+        const sourceContainer = document.getElementById('source-glyphs-container');
+        const targetContainer = document.getElementById('target-glyphs-container');
+        const btnReset = document.getElementById('btn-reset');
+        const btnAutoSolve = document.getElementById('btn-auto-solve');
 
-                box.onclick = () => lockGlyph(box, idx);
-            });
+        function initGlifosPuzzle() {
+            renderPuzzle();
         }
 
-        function lockGlyph(box, index) {
-            if (box.classList.contains('locked')) return;
+        function renderPuzzle() {
+            // Renderizar banco superior
+            sourceContainer.innerHTML = '';
+            sourceLetters.forEach((char, idx) => {
+                const box = document.createElement('div');
+                box.className = 'glyph-box';
+                box.textContent = char;
+                
+                const isUsed = currentState.includes(idx);
+                if (isUsed) {
+                    box.classList.add('used');
+                } else {
+                    box.onclick = () => selectSourceLetter(idx);
+                }
+                sourceContainer.appendChild(box);
+            });
 
-            clearInterval(glyphIntervals[index]);
-            box.textContent = targetWord[index];
-            box.classList.add('locked');
-            lockedCount++;
-
-            if (lockedCount === targetWord.length) {
-                triggerAccessGranted();
+            // Renderizar casillas inferiores de destino
+            targetContainer.innerHTML = '';
+            for (let i = 0; i < 7; i++) {
+                const targetBox = document.createElement('div');
+                targetBox.className = 'target-box';
+                
+                const sourceIdx = currentState[i];
+                if (sourceIdx !== null) {
+                    targetBox.textContent = sourceLetters[sourceIdx];
+                    targetBox.classList.add('filled');
+                    targetBox.onclick = () => removeTargetLetter(i);
+                } else {
+                    targetBox.textContent = '_';
+                }
+                targetContainer.appendChild(targetBox);
             }
         }
 
-        document.getElementById('btn-auto-solve').addEventListener('click', () => {
-            glyphBoxes.forEach((box, idx) => {
+        function selectSourceLetter(sourceIdx) {
+            const emptySlotIdx = currentState.indexOf(null);
+            if (emptySlotIdx !== -1) {
+                currentState[emptySlotIdx] = sourceIdx;
+                renderPuzzle();
+
+                if (!currentState.includes(null)) {
+                    checkPuzzleSolution();
+                }
+            }
+        }
+
+        function removeTargetLetter(targetIdx) {
+            currentState[targetIdx] = null;
+            renderPuzzle();
+        }
+
+        btnReset.onclick = () => {
+            currentState = Array(7).fill(null);
+            renderPuzzle();
+        };
+
+        btnAutoSolve.onclick = () => {
+            // Índices de QUIMERA en sourceLetters ['A'(0), 'E'(1), 'I'(2), 'U'(3), 'M'(4), 'Q'(5), 'R'(6)]:
+            // Q = 5, U = 3, I = 2, M = 4, E = 1, R = 6, A = 0
+            const solvedIndices = [5, 3, 2, 4, 1, 6, 0];
+            let step = 0;
+            currentState = Array(7).fill(null);
+            renderPuzzle();
+
+            const interval = setInterval(() => {
+                if (step < 7) {
+                    currentState[step] = solvedIndices[step];
+                    renderPuzzle();
+                    step++;
+                } else {
+                    clearInterval(interval);
+                    checkPuzzleSolution();
+                }
+            }, 200);
+        };
+
+        function checkPuzzleSolution() {
+            const formedWord = currentState.map(idx => idx !== null ? sourceLetters[idx] : '').join('');
+            if (formedWord === targetWord) {
+                triggerAccessGranted();
+            } else {
+                // Destello rojo de error en caso de secuencia incorrecta
+                const targetBoxes = targetContainer.querySelectorAll('.target-box');
+                targetBoxes.forEach(b => {
+                    b.style.borderColor = '#ef4444';
+                    b.style.color = '#ef4444';
+                });
                 setTimeout(() => {
-                    lockGlyph(box, idx);
-                }, idx * 180);
-            });
-        });
+                    renderPuzzle();
+                }, 600);
+            }
+        }
 
         function triggerAccessGranted() {
             const subtitle = document.getElementById('descifrador-subtitle');
@@ -696,10 +794,10 @@
             setTimeout(() => {
                 modalOculto.style.display = 'none';
 
-                // Encendido de TV invertido / de entrada para el descifrador de glifos
+                // Encendido de TV para el descifrador avanzado
                 const modalDescifrador = document.getElementById('modal-descifrador');
                 modalDescifrador.classList.add('tv-turn-on');
-                iniciarGlifos();
+                initGlifosPuzzle();
             }, 600);
         });
 
