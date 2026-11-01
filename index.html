@@ -25,26 +25,28 @@
             background-color: #000000;
         }
 
-        /* EFECTO CRT UNIFICADO (Scanlines RGB SIN oscurecimiento en esquinas) */
+        /* EFECTO CRT UNIFICADO (Scanlines RGB con position: sticky para persistir al hacer scroll) */
         .crt-screen-effect {
             position: relative;
-            overflow: hidden;
+            overflow-y: auto;
             border-radius: 12px;
         }
 
         .crt-screen-effect::before {
             content: "";
-            position: absolute;
+            position: sticky;
             top: 0;
             left: 0;
+            display: block;
             width: 100%;
             height: 100%;
+            min-height: 100vh;
             pointer-events: none;
             z-index: 20;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.45) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
             background-size: 100% 3px, 6px 100%;
             opacity: 0.85;
-            border-radius: inherit;
+            margin-bottom: -100vh; /* Permite que el sticky cubra todo el flujo del scroll */
         }
 
         /* RETROILUMINACIÓN RGB HOLOGRÁFICA TRIDIMENSIONAL PERMANENTE */
@@ -242,12 +244,14 @@
             text-transform: uppercase;
             letter-spacing: 0.1em;
             text-shadow: 0 0 15px rgba(200, 139, 50, 0.8);
+            -webkit-text-stroke: 0.25px #ffffff; /* Delineado blanco a 0.25 en encabezado */
         }
 
         .contenido-zona-oculta p {
             margin-bottom: 1.2rem;
             color: #ffffff;
             text-shadow: 0 0 8px rgba(0, 0, 0, 0.9);
+            -webkit-text-stroke: 0.25px #000000; /* Delineado negro a 0.25 en texto */
         }
 
         .contenedor-enlace-final {
@@ -265,6 +269,7 @@
             color: #ffffff;
             transition: opacity 500ms ease;
             display: inline-block;
+            -webkit-text-stroke: 0.25px #000000; /* Delineado negro a 0.25 en botón final */
         }
 
         .exploracion-letter {
@@ -326,7 +331,7 @@
     </div>
 
     <div id="modal-zona-oculta">
-        <!-- Contenedor con Quimeratrix.webp, Scanlines CRT y Luz Holográfica RGB posterior -->
+        <!-- Contenedor con Quimeratrix.webp, Scanlines CRT persistentes y Luz Holográfica RGB posterior -->
         <div class="contenido-zona-oculta crt-screen-effect hologram-glow-box">
             <h2 class="titulo-oculto laser-burn-effect">HAS ENCONTRADO LA ZONA OCULTA DE QUIMERA.</h2>
             
