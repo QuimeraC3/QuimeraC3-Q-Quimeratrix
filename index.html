@@ -271,7 +271,7 @@
             z-index: 10;
         }
 
-        /* CLASE REFORZADA PARA TÍTULOS CON GROSOR, TAMAÑO Y DELINEADO PROTEGIDO */
+        /* TÍTULOS CON GROSOR, TAMAÑO Y DELINEADO PROTEGIDO */
         .titulo-oculto {
             color: #fef384;
             font-family: Georgia, "Times New Roman", serif;
@@ -283,10 +283,11 @@
             letter-spacing: 0.1em;
             text-shadow: 0 0 15px rgba(200, 139, 50, 0.8);
             -webkit-text-stroke: 2px #000000;
-            padding: 0 12px; /* Evita que el borde grueso se corte en animaciones */
+            padding: 0 12px;
         }
 
-        .contenido-zona-oculta-texto p {
+        /* PÁRRAFOS RESTAURADOS CON TAMAÑO, GROSOR Y DELINEADO EN LA ZONA OCULTA */
+        #view-zona-oculta p {
             margin-bottom: 1.2rem;
             color: #ffffff;
             font-weight: 700;
@@ -334,6 +335,11 @@
 
         #iniciar-exploracion.active-wave .exploracion-letter {
             animation: quimeraSequentialWave 2.264s infinite linear;
+        }
+
+        /* VISTA 2 CENTRADA */
+        #view-descifrador {
+            text-align: center;
         }
 
         /* ESTILOS DEL DESCIFRADOR DE GLIFOS AVANZADO */
@@ -419,7 +425,11 @@
             border-color: #ef4444;
         }
 
-        /* ESTILOS DEL CANDADO HOLOGRÁFICO AZUL NEÓN (AMPLIADO) */
+        /* ESTILOS DEL CANDADO HOLOGRÁFICO AZUL NEÓN (AMPLIADO Y CENTRADO) */
+        #hologram-lock-container {
+            text-align: center;
+        }
+
         .holo-lock {
             width: 130px;
             height: 150px;
@@ -569,7 +579,7 @@
                         </div>
                     </div>
 
-                    <!-- Contenedor del Candado Holográfico Ampliado -->
+                    <!-- Contenedor del Candado Holográfico Ampliado y Centrado -->
                     <div id="hologram-lock-container" style="display: none;">
                         <div class="holo-lock">
                             <div class="holo-shackle"></div>
