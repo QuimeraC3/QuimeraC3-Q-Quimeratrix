@@ -271,6 +271,7 @@
             z-index: 10;
         }
 
+        /* CLASE REFORZADA PARA TÍTULOS CON GROSOR, TAMAÑO Y DELINEADO PROTEGIDO */
         .titulo-oculto {
             color: #fef384;
             font-family: Georgia, "Times New Roman", serif;
@@ -281,7 +282,8 @@
             text-transform: uppercase;
             letter-spacing: 0.1em;
             text-shadow: 0 0 15px rgba(200, 139, 50, 0.8);
-            -webkit-text-stroke: 1.5px #000000;
+            -webkit-text-stroke: 2px #000000;
+            padding: 0 12px; /* Evita que el borde grueso se corte en animaciones */
         }
 
         .contenido-zona-oculta-texto p {
@@ -862,7 +864,6 @@
             subtitleElem.style.color = "#fef384";
             subtitleElem.style.fontWeight = "bold";
 
-            // Primera evaporación del panel del rompecabezas antes de mostrar el candado
             const puzzleArea = document.getElementById('puzzle-content-area');
             puzzleArea.classList.add('vaporize-effect');
 
@@ -870,18 +871,15 @@
                 puzzleArea.style.display = 'none';
                 puzzleArea.classList.remove('vaporize-effect');
 
-                // Mostrar y materializar el candado holográfico
                 const lockContainer = document.getElementById('hologram-lock-container');
                 lockContainer.style.display = 'block';
                 lockContainer.classList.add('materialize-effect');
 
-                // Activar apertura del candado
                 setTimeout(() => {
                     const holoLock = document.querySelector('.holo-lock');
                     if (holoLock) holoLock.classList.add('unlocked');
                 }, 400);
 
-                // Tras los 4 segundos de disfrute, evaporar todo el modal principal antes de la redirección
                 setTimeout(() => {
                     const modalBox = document.querySelector('.contenido-modal-principal');
                     modalBox.classList.add('vaporize-effect');
@@ -904,32 +902,26 @@
             }, 800);
         }
 
-        // TRANSICIÓN HOLOGRÁFICA DE EVAPORACIÓN AL HACER CLIC EN "COMENZAR LA EXPLORACIÓN"
         document.getElementById('iniciar-exploracion').addEventListener('click', function(e) {
             e.preventDefault();
             
             const viewOculta = document.getElementById('view-zona-oculta');
             const scrollWrapper = document.getElementById('modal-inner-scroll');
             
-            // Aplicar efecto de evaporación de partículas al texto de bienvenida
             viewOculta.classList.add('vaporize-effect');
 
             setTimeout(() => {
-                // Ocultar texto de bienvenida y resetear scroll arriba
                 viewOculta.style.display = 'none';
                 scrollWrapper.scrollTop = 0;
 
-                // Revelar y materializar la vista del descifrador
                 const viewDescifrador = document.getElementById('view-descifrador');
                 viewDescifrador.style.display = 'block';
                 viewDescifrador.classList.add('materialize-effect');
 
-                // Inicializar el puzle de glifos
                 initGlifosPuzzle();
             }, 800);
         });
 
-        // RECUPERACIÓN DESDE CACHÉ (Evita pantalla congelada/blanca al regresar)
         window.addEventListener('pageshow', function(event) {
             if (event.persisted) {
                 window.location.replace(ECOSYSTEM_URL);
