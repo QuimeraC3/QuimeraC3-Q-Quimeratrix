@@ -489,7 +489,6 @@
         <div class="contenido-descifrador crt-screen-effect hologram-glow-box">
             <div class="modal-scroll-wrapper">
                 <h2 class="titulo-oculto">ENCUENTRA LA CONTRASEÑA</h2>
-                <!-- Aquí se modificó el tamaño de letra con font-size: clamp(1rem, 2vw, 1.25rem); -->
                 <p style="color: #ffffff; font-weight: 700; margin-bottom: 1rem; font-size: clamp(1.5rem, 3.0vw, 1.75rem); -webkit-text-stroke: 1.0px #000000;" id="descifrador-subtitle">Fase 1: En la zona del CRIPTEX, haz clic en cada recuadro para revelar el banco de glifos:</p>
 
                 <div class="glyphs-section-title">CRIPTEX (Descubre los 7 glifos):</div>
@@ -498,9 +497,9 @@
                 <div class="glyphs-section-title" style="margin-top: 1rem;">CODEX - INTRODUCE LA CONTRASEÑA:</div>
                 <div class="glyphs-wrapper" id="target-glyphs-container"></div>
 
-                <div style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-                    <button class="btn-control" id="btn-reset" style="padding: 0.6rem 1.2rem; font-size: clamp(1.0rem, 2.0vw, 1.25rem); font-weight: 600; -webkit-text-stroke: 0.5px #000000;">REINICIAR</button>
-                    <button class="btn-control" id="btn-auto-solve" style="padding: 0.6rem 1.2rem; font-size: 0.9rem;">CALIBRACIÓN AUTOMÁTICA</button>
+                <!-- Botón REINICIAR centrado -->
+                <div style="margin-top: 1.5rem; display: flex; justify-content: center;">
+                    <button class="btn-control" id="btn-reset" style="padding: 0.6rem 1.5rem; font-size: clamp(1.0rem, 2.0vw, 1.25rem); font-weight: 600; -webkit-text-stroke: 0.5px #000000;">REINICIAR</button>
                 </div>
             </div>
         </div>
@@ -658,7 +657,6 @@
         const targetContainer = document.getElementById('target-glyphs-container');
         const subtitleElem = document.getElementById('descifrador-subtitle');
         const btnReset = document.getElementById('btn-reset');
-        const btnAutoSolve = document.getElementById('btn-auto-solve');
 
         function initGlifosPuzzle() {
             sourceRevealed = Array(7).fill(false);
@@ -767,28 +765,6 @@
             subtitleElem.style.color = "#ffffff";
             startSourceMatrixIntervals();
             renderPuzzle();
-        };
-
-        btnAutoSolve.onclick = () => {
-            sourceRevealed = Array(7).fill(true);
-            sourceIntervals.forEach(clearInterval);
-
-            // Q = 5, U = 3, I = 2, M = 4, E = 1, R = 6, A = 0
-            const solvedIndices = [5, 3, 2, 4, 1, 6, 0];
-            let step = 0;
-            currentState = Array(7).fill(null);
-            renderPuzzle();
-
-            const interval = setInterval(() => {
-                if (step < 7) {
-                    currentState[step] = solvedIndices[step];
-                    renderPuzzle();
-                    step++;
-                } else {
-                    clearInterval(interval);
-                    checkPuzzleSolution();
-                }
-            }, 150);
         };
 
         function checkPuzzleSolution() {
