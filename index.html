@@ -143,6 +143,48 @@
             100% { opacity: 0; clip-path: inset(0 0 0 0); }
         }
 
+        /* EFECTO HOLOGRÁFICO DE PARTÍCULAS QUE SE EVAPORAN */
+        @keyframes holoVaporize {
+            0% {
+                opacity: 1;
+                filter: blur(0px) brightness(1);
+                transform: scale(1) translateY(0);
+            }
+            50% {
+                opacity: 0.6;
+                filter: blur(3px) brightness(2) drop-shadow(0 0 15px #38bdf8);
+                transform: scale(1.02) translateY(-5px);
+            }
+            100% {
+                opacity: 0;
+                filter: blur(8px) brightness(3);
+                transform: scale(0.98) translateY(-15px);
+                letter-spacing: 0.2em;
+            }
+        }
+
+        .vaporize-effect {
+            animation: holoVaporize 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        /* EFECTO DE APARICIÓN HOLOGRÁFICA (FADE-IN CON BRILLO) */
+        @keyframes holoMaterialize {
+            0% {
+                opacity: 0;
+                filter: blur(6px) brightness(2.5);
+                transform: scale(0.98) translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                filter: blur(0px) brightness(1);
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .materialize-effect {
+            animation: holoMaterialize 0.9s cubic-bezier(0.1, 1, 0.3, 1) forwards;
+        }
+
         /* Lienzo Matrix */
         #matrix-canvas {
             position: fixed;
@@ -199,8 +241,8 @@
             background: var(--accent);
         }
 
-        /* Modal Zona Oculta y Modal Descifrador */
-        #modal-zona-oculta, #modal-descifrador {
+        /* Modal único unificado con fondo Quimeratrix.webp */
+        #modal-principal {
             position: fixed;
             top: 0;
             left: 0;
@@ -216,8 +258,7 @@
             transform: scale(0, 0.01); 
         }
 
-        /* Contenedor Externo con Quimeratrix.webp, Luz RGB y marco CRT */
-        .contenido-zona-oculta {
+        .contenido-modal-principal {
             position: relative;
             background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url('Quimeratrix.webp');
             background-size: cover;
@@ -227,23 +268,6 @@
             width: 85vw;
             max-width: 800px;
             color: #ffffff;
-            font-size: clamp(0.85rem, 1.2vw, 1rem);
-            line-height: 1.7;
-            z-index: 10;
-        }
-
-        /* Contenedor específico para el Descifrador de Glifos (con Quimeratrix.webp de fondo) */
-        .contenido-descifrador {
-            position: relative;
-            background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url('Quimeratrix.webp');
-            background-size: cover;
-            background-position: center center;
-            border: 1.5px solid var(--accent);
-            border-radius: 12px;
-            width: 85vw;
-            max-width: 750px;
-            color: #ffffff;
-            text-align: center;
             z-index: 10;
         }
 
@@ -260,7 +284,7 @@
             -webkit-text-stroke: 1.5px #000000;
         }
 
-        .contenido-zona-oculta p {
+        .contenido-zona-oculta-texto p {
             margin-bottom: 1.2rem;
             color: #ffffff;
             font-weight: 700;
@@ -393,7 +417,7 @@
             border-color: #ef4444;
         }
 
-        /* ESTILOS DEL CANDADO HOLOGRÁFICO AZUL NEÓN (AMPLIADO PARA MÁXIMA LEGIBILIDAD) */
+        /* ESTILOS DEL CANDADO HOLOGRÁFICO AZUL NEÓN (AMPLIADO) */
         .holo-lock {
             width: 130px;
             height: 150px;
@@ -456,18 +480,6 @@
             40% { transform: scale(1, 0.01); opacity: 1; filter: brightness(10); }
             100% { transform: scale(1, 1); opacity: 1; filter: brightness(1); }
         }
-
-        /* Animación TV Apagándose */
-        .tv-turn-off {
-            animation: tvTurnOff 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-            pointer-events: none !important;
-        }
-
-        @keyframes tvTurnOff {
-            0% { transform: scale(1, 1); opacity: 1; filter: brightness(1); }
-            60% { transform: scale(1, 0.01); opacity: 1; filter: brightness(10); }
-            100% { transform: scale(0, 0.01); opacity: 0; filter: brightness(20); }
-        }
     </style>
 </head>
 <body>
@@ -481,88 +493,88 @@
         <button class="btn-control" id="fullscreen-toggle">⛶ Pantalla Completa</button>
     </div>
 
-    <!-- MODAL 1: QUIMERATRIX -->
-    <div id="modal-zona-oculta">
-        <div class="contenido-zona-oculta crt-screen-effect hologram-glow-box">
-            <div class="modal-scroll-wrapper">
-                <h2 class="titulo-oculto laser-burn-effect">HAS ENCONTRADO LA ZONA OCULTA DE QUIMERA.</h2>
-                
-                <p class="laser-burn-effect">¡FELICIDADES, NAVEGANTE!</p>
-                <p class="laser-burn-effect">Si estás leyendo este mensaje, significa que has encontrado uno de los accesos ocultos del ecosistema QUIMERA.</p>
-                <p class="laser-burn-effect">No todos los caminos están señalizados. Algunos deben descubrirse.</p>
-                <p class="laser-burn-effect">Has llegado a un espacio concebido para quienes sienten curiosidad por mirar un poco más allá de lo evidente. Aquí comienza una experiencia distinta de navegación: más inmersiva, más exploratoria y quizá, un poco más enigmática.</p>
+    <!-- MODAL ÚNICO UNIFICADO DEL ECOSISTEMA -->
+    <div id="modal-principal">
+        <div class="contenido-modal-principal crt-screen-effect hologram-glow-box">
+            <div class="modal-scroll-wrapper" id="modal-inner-scroll">
 
-                <p class="laser-burn-effect"><strong>ANTES DE CONTINUAR…</strong><br>
-                Para disfrutar plenamente de esta experiencia, te recomendamos:</p>
+                <!-- VISTA 1: ZONA OCULTA DE QUIMERA -->
+                <div id="view-zona-oculta">
+                    <h2 class="titulo-oculto laser-burn-effect">HAS ENCONTRADO LA ZONA OCULTA DE QUIMERA.</h2>
+                    
+                    <p class="laser-burn-effect">¡FELICIDADES, NAVEGANTE!</p>
+                    <p class="laser-burn-effect">Si estás leyendo este mensaje, significa que has encontrado uno de los accesos ocultos del ecosistema QUIMERA.</p>
+                    <p class="laser-burn-effect">No todos los caminos están señalizados. Algunos deben descubrirse.</p>
+                    <p class="laser-burn-effect">Has llegado a un espacio concebido para quienes sienten curiosidad por mirar un poco más allá de lo evidente. Aquí comienza una experiencia distinta de navegación: más inmersiva, más exploratoria y quizá, un poco más enigmática.</p>
 
-                <p class="laser-burn-effect">◈ <strong>Activa la pantalla completa:</strong><br>
-                Para tu computadora de escritorio, presiona F11 en tu teclado para ampliar el espacio de navegación y favorecer una experiencia más inmersiva.</p>
+                    <p class="laser-burn-effect"><strong>ANTES DE CONTINUAR…</strong><br>
+                    Para disfrutar plenamente de esta experiencia, te recomendamos:</p>
 
-                <p class="laser-burn-effect">◈ <strong>Enciende la música:</strong><br>
-                Utiliza el botón de música para escuchar el soundtrack del Instituto QUIMERA.<br>
-                La música no está aquí por accidente: forma parte de la atmósfera de este espacio.</p>
+                    <p class="laser-burn-effect">◈ <strong>Activa la pantalla completa:</strong><br>
+                    Para tu computadora de escritorio, presiona F11 en tu teclado para ampliar el espacio de navegación y favorecer una experiencia más inmersiva.</p>
 
-                <p class="laser-burn-effect">◈ <strong>Explora sin prisa:</strong><br>
-                Observa los textos, imágenes, símbolos y elementos interactivos. Algunos caminos pueden conducir a lugares que no aparecen a primera vista.</p>
+                    <p class="laser-burn-effect">◈ <strong>Enciende la música:</strong><br>
+                    Utiliza el botón de música para escuchar el soundtrack del Instituto QUIMERA.<br>
+                    La música no está aquí por accidente: forma parte de la atmósfera de este espacio.</p>
 
-                <p class="laser-burn-effect">◈ <strong>Haz clic. Investiga. Regresa.</strong><br>
-                El Ecosistema QUIMERA está diseñado para ser recorrido, no simplemente consultado. Si algo despierta tu curiosidad, síguelo.</p>
+                    <p class="laser-burn-effect">◈ <strong>Explora sin prisa:</strong><br>
+                    Observa los textos, imágenes, símbolos y elementos interactivos. Algunos caminos pueden conducir a lugares que no aparecen a primera vista.</p>
 
-                <p class="laser-burn-effect">◈ <strong>Presta atención a los detalles:</strong><br>
-                En este ecosistema, algunos elementos cumplen más de una función. Lo que parece ornamental podría ser una pista. Lo que parece una pista podría conducir a otra.</p>
+                    <p class="laser-burn-effect">◈ <strong>Haz clic. Investiga. Regresa.</strong><br>
+                    El Ecosistema QUIMERA está diseñado para ser recorrido, no simplemente consultado. Si algo despierta tu curiosidad, síguelo.</p>
 
-                <p class="laser-burn-effect"><strong>Y SOBRE TODO…</strong><br>
-                No dejes de buscar.</p>
+                    <p class="laser-burn-effect">◈ <strong>Presta atención a los detalles:</strong><br>
+                    En este ecosistema, algunos elementos cumplen más de una función. Lo que parece ornamental podría ser una pista. Lo que parece una pista podría conducir a otra.</p>
 
-                <p class="laser-burn-effect">QUIMERA guarda fragmentos de su propia historia en lugares que no siempre se anuncian.<br>
-                Algún fragmento de QUIMERA no se encuentra en los caminos principales: hay que descubrirlos.</p>
+                    <p class="laser-burn-effect"><strong>Y SOBRE TODO…</strong><br>
+                    No dejes de buscar.</p>
 
-                <p class="laser-burn-effect">Si has llegado hasta aquí, ya has demostrado que sabes encontrar lo que permanece oculto.</p>
+                    <p class="laser-burn-effect">QUIMERA guarda fragmentos de su propia historia en lugares que no siempre se anuncian.<br>
+                    Algún fragmento de QUIMERA no se encuentra en los caminos principales: hay que descubrirlos.</p>
 
-                <p class="laser-burn-effect">Ahora comienza la verdadera exploración. Continúa recorriendo el ecosistema. Sigue las pistas. Descubre los símbolos. Encuentra los caminos que no aparecen en el mapa.</p>
+                    <p class="laser-burn-effect">Si has llegado hasta aquí, ya has demostrado que sabes encontrar lo que permanece oculto.</p>
 
-                <p class="laser-burn-effect">Porque detrás de QUIMERA existe una historia. Una historia que espera ser descubierta.</p>
+                    <p class="laser-burn-effect">Ahora comienza la verdadera exploración. Continúa recorriendo el ecosistema. Sigue las pistas. Descubre los símbolos. Encuentra los caminos que no aparecen en el mapa.</p>
 
-                <p class="laser-burn-effect">¿Serás capaz de encontrarla?</p>
+                    <p class="laser-burn-effect">Porque detrás de QUIMERA existe una historia. Una historia que espera ser descubierta.</p>
 
-                <p class="laser-burn-effect">La exploración apenas comienza...</p>
+                    <p class="laser-burn-effect">¿Serás capaz de encontrarla?</p>
 
-                <p class="laser-burn-effect">BIENVENIDOS A LA ZONA OCULTA DE QUIMERA</p>
+                    <p class="laser-burn-effect">La exploración apenas comienza...</p>
 
-                <div class="contenedor-enlace-final">
-                    <a href="#" id="iniciar-exploracion" class="laser-burn-effect">COMENZAR LA EXPLORACIÓN.</a>
-                </div>
-            </div>
-        </div>
-    </div>
+                    <p class="laser-burn-effect">BIENVENIDOS A LA ZONA OCULTA DE QUIMERA</p>
 
-    <!-- MODAL 2: DESCIFRADOR DE GLIFOS AVANZADO CON CÓDIGO MATRIX Y CANDADO HOLOGRÁFICO AMPLIADO -->
-    <div id="modal-descifrador">
-        <div class="contenido-descifrador crt-screen-effect hologram-glow-box">
-            <div class="modal-scroll-wrapper">
-                <h2 class="titulo-oculto">ENCUENTRA LA CONTRASEÑA</h2>
-                <p style="color: #ffffff; font-weight: 700; margin-bottom: 1rem; font-size: clamp(1.5rem, 3.0vw, 1.75rem); -webkit-text-stroke: 1.0px #000000;" id="descifrador-subtitle">Fase 1: En la zona del CRIPTEX, haz clic en cada recuadro para revelar el banco de glifos:</p>
-
-                <div id="puzzle-content-area">
-                    <div class="glyphs-section-title">CRIPTEX (Descubre los 7 glifos):</div>
-                    <div class="glyphs-wrapper" id="source-glyphs-container"></div>
-
-                    <div class="glyphs-section-title" style="margin-top: 1rem;">CODEX - INTRODUCE LA CONTRASEÑA:</div>
-                    <div class="glyphs-wrapper" id="target-glyphs-container"></div>
-
-                    <!-- Botón REINICIAR centrado -->
-                    <div style="margin-top: 1.5rem; display: flex; justify-content: center;" id="reset-container">
-                        <button class="btn-control" id="btn-reset" style="padding: 0.6rem 1.5rem; font-size: clamp(1.0rem, 2.0vw, 1.25rem); font-weight: 600; -webkit-text-stroke: 0.5px #000000;">REINICIAR</button>
+                    <div class="contenedor-enlace-final">
+                        <a href="#" id="iniciar-exploracion" class="laser-burn-effect">COMENZAR LA EXPLORACIÓN.</a>
                     </div>
                 </div>
 
-                <!-- Contenedor del Candado Holográfico Ampliado y Texto Más Grande -->
-                <div id="hologram-lock-container" style="display: none;">
-                    <div class="holo-lock">
-                        <div class="holo-shackle"></div>
-                        <div class="holo-body"></div>
+                <!-- VISTA 2: DESCIFRADOR DE GLIFOS (INICIALMENTE OCULTA) -->
+                <div id="view-descifrador" style="display: none;">
+                    <h2 class="titulo-oculto">ENCUENTRA LA CONTRASEÑA</h2>
+                    <p style="color: #ffffff; font-weight: 700; margin-bottom: 1rem; font-size: clamp(1.5rem, 3.0vw, 1.75rem); -webkit-text-stroke: 1.0px #000000;" id="descifrador-subtitle">Fase 1: En la zona del CRIPTEX, haz clic en cada recuadro para revelar el banco de glifos:</p>
+
+                    <div id="puzzle-content-area">
+                        <div class="glyphs-section-title">CRIPTEX (Descubre los 7 glifos):</div>
+                        <div class="glyphs-wrapper" id="source-glyphs-container"></div>
+
+                        <div class="glyphs-section-title" style="margin-top: 1rem;">CODEX - INTRODUCE LA CONTRASEÑA:</div>
+                        <div class="glyphs-wrapper" id="target-glyphs-container"></div>
+
+                        <!-- Botón REINICIAR centrado -->
+                        <div style="margin-top: 1.5rem; display: flex; justify-content: center;" id="reset-container">
+                            <button class="btn-control" id="btn-reset" style="padding: 0.6rem 1.5rem; font-size: clamp(1.0rem, 2.0vw, 1.25rem); font-weight: 600; -webkit-text-stroke: 0.5px #000000;">REINICIAR</button>
+                        </div>
                     </div>
-                    <p style="color: #38bdf8; font-family: monospace; font-size: clamp(1.4rem, 3vw, 2rem); font-weight: bold; margin-top: 1.5rem; text-shadow: 0 0 15px #38bdf8; -webkit-text-stroke: 0.8px #000000;">SISTEMA DESBLOQUEADO: ACCEDIENDO...</p>
+
+                    <!-- Contenedor del Candado Holográfico Ampliado -->
+                    <div id="hologram-lock-container" style="display: none;">
+                        <div class="holo-lock">
+                            <div class="holo-shackle"></div>
+                            <div class="holo-body"></div>
+                        </div>
+                        <p style="color: #38bdf8; font-family: monospace; font-size: clamp(1.4rem, 3vw, 2rem); font-weight: bold; margin-top: 1.5rem; text-shadow: 0 0 15px #38bdf8; -webkit-text-stroke: 0.8px #000000;">SISTEMA DESBLOQUEADO: ACCEDIENDO...</p>
+                    </div>
                 </div>
 
             </div>
@@ -624,7 +636,7 @@
 
         // SECUENCIA DE REVELADO LÁSER SECUENCIAL
         async function iniciarEscrituraLaser() {
-            const elementos = Array.from(document.querySelectorAll('#modal-zona-oculta .laser-burn-effect'));
+            const elementos = Array.from(document.querySelectorAll('#view-zona-oculta .laser-burn-effect'));
             
             for (let el of elementos) {
                 el.classList.add('active-laser');
@@ -688,7 +700,7 @@
         // SECUENCIA DE INTRO Y SALIDA
         function runIntroSequence() {
             const overlay = document.getElementById('intro-overlay');
-            const modalOculto = document.getElementById('modal-zona-oculta');
+            const modalPrincipal = document.getElementById('modal-principal');
             const controlsBar = document.querySelector('.controls-bar');
 
             setTimeout(() => { overlay.style.backgroundColor = '#000000'; }, 300);
@@ -700,7 +712,7 @@
                 overlay.style.opacity = '0';      
                 
                 setTimeout(() => {
-                    modalOculto.classList.add('tv-turn-on');
+                    modalPrincipal.classList.add('tv-turn-on');
                     if (controlsBar) {
                         controlsBar.classList.add('tv-turn-on');
                     }
@@ -749,7 +761,6 @@
         }
 
         function renderPuzzle() {
-            // Renderizar Banco Superior con efecto Matrix en no revelados
             sourceContainer.innerHTML = '';
             sourceLetters.forEach((char, idx) => {
                 const box = document.createElement('div');
@@ -773,7 +784,6 @@
                 sourceContainer.appendChild(box);
             });
 
-            // Renderizar Casillas Inferiores de Ensamblaje
             targetContainer.innerHTML = '';
             for (let i = 0; i < 7; i++) {
                 const targetBox = document.createElement('div');
@@ -848,62 +858,75 @@
         }
 
         function triggerAccessGranted() {
-            // Actualizar texto del subtítulo y centrarlo
             subtitleElem.textContent = "¡SECUENCIA CORRECTA! ACCESO CONCEDIDO.";
             subtitleElem.style.color = "#fef384";
             subtitleElem.style.fontWeight = "bold";
 
-            // Ocultar el área interactiva del rompecabezas y mostrar el candado holográfico ampliado
-            document.getElementById('puzzle-content-area').style.display = 'none';
-            const lockContainer = document.getElementById('hologram-lock-container');
-            lockContainer.style.display = 'block';
+            // Primera evaporación del panel del rompecabezas antes de mostrar el candado
+            const puzzleArea = document.getElementById('puzzle-content-area');
+            puzzleArea.classList.add('vaporize-effect');
 
-            // Activar la animación de apertura del candado holográfico tras un breve instante
             setTimeout(() => {
-                const holoLock = document.querySelector('.holo-lock');
-                if (holoLock) holoLock.classList.add('unlocked');
-            }, 300);
+                puzzleArea.style.display = 'none';
+                puzzleArea.classList.remove('vaporize-effect');
 
-            const modalDescifrador = document.getElementById('modal-descifrador');
-            const controlsBar = document.querySelector('.controls-bar');
-            const overlay = document.getElementById('intro-overlay');
+                // Mostrar y materializar el candado holográfico
+                const lockContainer = document.getElementById('hologram-lock-container');
+                lockContainer.style.display = 'block';
+                lockContainer.classList.add('materialize-effect');
 
-            // Secuencia de salida duplicada a 4000ms (4 segundos) para disfrutar el efecto con calma
-            setTimeout(() => {
-                modalDescifrador.classList.remove('tv-turn-on');
-                modalDescifrador.classList.add('tv-turn-off');
-
-                if (controlsBar) {
-                    controlsBar.classList.remove('tv-turn-on');
-                    controlsBar.classList.add('tv-turn-off');
-                }
-
+                // Activar apertura del candado
                 setTimeout(() => {
-                    matrixCanvas.style.opacity = '0';
-                    overlay.style.backgroundColor = '#ffffff';
-                    overlay.style.opacity = '1';
+                    const holoLock = document.querySelector('.holo-lock');
+                    if (holoLock) holoLock.classList.add('unlocked');
+                }, 400);
+
+                // Tras los 4 segundos de disfrute, evaporar todo el modal principal antes de la redirección
+                setTimeout(() => {
+                    const modalBox = document.querySelector('.contenido-modal-principal');
+                    modalBox.classList.add('vaporize-effect');
+
+                    const controlsBar = document.querySelector('.controls-bar');
+                    if (controlsBar) controlsBar.classList.add('vaporize-effect');
+
                     setTimeout(() => {
-                        window.location.replace(ECOSYSTEM_URL);
-                    }, 1000);
-                }, 600);
-            }, 4000);
+                        matrixCanvas.style.opacity = '0';
+                        const overlay = document.getElementById('intro-overlay');
+                        overlay.style.backgroundColor = '#ffffff';
+                        overlay.style.opacity = '1';
+                        setTimeout(() => {
+                            window.location.replace(ECOSYSTEM_URL);
+                        }, 1000);
+                    }, 800);
+
+                }, 4000);
+
+            }, 800);
         }
 
-        // TRANSICIÓN DE QUIMERATRIX AL DESCIFRADOR DE GLIFOS
+        // TRANSICIÓN HOLOGRÁFICA DE EVAPORACIÓN AL HACER CLIC EN "COMENZAR LA EXPLORACIÓN"
         document.getElementById('iniciar-exploracion').addEventListener('click', function(e) {
             e.preventDefault();
-            const modalOculto = document.getElementById('modal-zona-oculta');
             
-            modalOculto.classList.remove('tv-turn-on');
-            modalOculto.classList.add('tv-turn-off');
+            const viewOculta = document.getElementById('view-zona-oculta');
+            const scrollWrapper = document.getElementById('modal-inner-scroll');
+            
+            // Aplicar efecto de evaporación de partículas al texto de bienvenida
+            viewOculta.classList.add('vaporize-effect');
 
             setTimeout(() => {
-                modalOculto.style.display = 'none';
+                // Ocultar texto de bienvenida y resetear scroll arriba
+                viewOculta.style.display = 'none';
+                scrollWrapper.scrollTop = 0;
 
-                const modalDescifrador = document.getElementById('modal-descifrador');
-                modalDescifrador.classList.add('tv-turn-on');
+                // Revelar y materializar la vista del descifrador
+                const viewDescifrador = document.getElementById('view-descifrador');
+                viewDescifrador.style.display = 'block';
+                viewDescifrador.classList.add('materialize-effect');
+
+                // Inicializar el puzle de glifos
                 initGlifosPuzzle();
-            }, 600);
+            }, 800);
         });
 
         // RECUPERACIÓN DESDE CACHÉ (Evita pantalla congelada/blanca al regresar)
