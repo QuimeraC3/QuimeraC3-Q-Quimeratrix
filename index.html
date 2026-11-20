@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quimeratrix &bull; Bienvenida Modo Oculto</title>
+    <!-- Favicon institucional compartido con indexMDQ: Q dorada sobre fondo oscuro -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230f172a'/%3E%3Ctext x='50' y='76' font-family='Georgia,serif' font-size='76' font-weight='bold' fill='%23c88b32' text-anchor='middle'%3EQ%3C/text%3E%3C/svg%3E">
     <style>
         :root {
             --accent: #c88b32;
@@ -183,6 +185,55 @@
 
         .materialize-effect {
             animation: holoMaterialize 0.9s cubic-bezier(0.1, 1, 0.3, 1) forwards;
+        }
+
+        /* Secuencia de recompensa posterior al desbloqueo: QUIMERA queda detrás del modal */
+        #completion-stage {
+            position: fixed; inset: 0; z-index: 24900;
+            opacity: 0; visibility: hidden; pointer-events: none;
+            transition: opacity 900ms ease, visibility 900ms ease;
+        }
+        #completion-stage.visible { opacity: 1; visibility: visible; }
+        #completion-quimera {
+            position: absolute; top: 29%; left: 50%; transform: translate(-50%, -50%);
+            display: inline-flex; justify-content: center; align-items: center; gap: .045em;
+            width: max-content; max-width: 96vw; white-space: nowrap;
+            color: #fff; text-decoration: none; cursor: pointer; pointer-events: auto;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: clamp(2.65rem, 10vw, 7rem); font-weight: 900;
+            letter-spacing: .10em; line-height: 1.2;
+            -webkit-text-stroke: 1.5px #000;
+            text-shadow: 0 0 18px rgba(56,189,248,.55), 0 5px 24px rgba(0,0,0,.9);
+            filter: drop-shadow(0 0 20px rgba(200,139,50,.22));
+        }
+        .completion-letter { display: inline-block; color: #fff; transition: color .35s ease, text-shadow .35s ease; }
+        .completion-letter.gold { color: #c88b32; text-shadow: 0 0 18px rgba(200,139,50,.95), 0 0 34px rgba(200,139,50,.55); }
+        #completion-quimera:focus-visible { outline: 3px solid #38bdf8; outline-offset: 10px; }
+        #completion-message {
+            position: absolute; top: 51%; left: 50%; transform: translateX(-50%);
+            width: min(1100px, 92vw); margin: 0; text-align: center;
+            color: #fff; font-size: clamp(.95rem, 2.05vw, 1.55rem);
+            font-weight: 800; line-height: 1.9; letter-spacing: .055em;
+            -webkit-text-stroke: .55px #000;
+            text-shadow: 0 0 10px rgba(56,189,248,.6), 0 3px 14px #000;
+            opacity: 0; clip-path: inset(0 100% 0 0);
+        }
+        #completion-message.active-laser { opacity: 1; }
+        #completion-message.revealed { opacity: 1; clip-path: inset(0 0 0 0); }
+        #initial-code-canvas {
+            position: fixed; inset: 0; width: 100vw; height: 100vh;
+            z-index: 24910; opacity: 0; pointer-events: none;
+            transition: opacity .65s ease;
+        }
+        body.completion-exit #completion-stage,
+        body.completion-exit #matrix-canvas,
+        body.completion-exit #initial-code-canvas {
+            filter: blur(12px); opacity: .35;
+            transition: filter .8s ease, opacity .8s ease;
+        }
+        @media (max-width: 650px) {
+            #completion-quimera { top: 27%; font-size: clamp(2.35rem, 12vw, 4.5rem); }
+            #completion-message { top: 47%; width: 90vw; font-size: clamp(.82rem, 3.1vw, 1.08rem); line-height: 1.8; }
         }
 
         /* Lienzo Matrix */
@@ -499,6 +550,14 @@
 
     <audio id="bg-music" src="Tango_Futuro_(Lado_B).mp3" loop preload="auto"></audio>
     <canvas id="matrix-canvas"></canvas>
+    <!-- Capa final: QUIMERA aparece detrás del modal y permanece sobre la lluvia Matrix -->
+    <div id="completion-stage" aria-live="polite">
+        <a href="https://quimerac3.github.io/QuimeraC3-Q/" id="completion-quimera" aria-label="Acceder al portal principal del Ecosistema Quimera">
+            <span class="completion-letter">Q</span><span class="completion-letter">U</span><span class="completion-letter">I</span><span class="completion-letter">M</span><span class="completion-letter">E</span><span class="completion-letter">R</span><span class="completion-letter">A</span>
+        </a>
+        <p id="completion-message" class="laser-burn-effect">POR DESCUBRIR LA ZONA OCULTA DE QUIMERA, HAS GANADO EL ACCESO AL PRIMERO DE SIETE CÓDIGOS.<br>GUÁRDALO, TE SERÁ ÚTIL EN UN FUTURO CERCANO.</p>
+    </div>
+    <canvas id="initial-code-canvas" aria-label="Código inicial: 05-20-21-05"></canvas>
     <div id="intro-overlay"></div>
 
     <div class="controls-bar">
@@ -873,6 +932,251 @@
             }
         }
 
+        // ============================================================
+        // SECUENCIA FINAL: QUIMERA + RECOMPENSA + CÓDIGO INICIAL
+        // La animación de partículas replica la composición de
+        // "CÓDIGO FINAL" de indexMDQ, adaptada al primer código.
+        // ============================================================
+        let completionColorTimer = null;
+        let codeAnimationFrame = 0;
+        let completionExitStarted = false;
+
+        function animateCompletionWord() {
+            const word = document.getElementById('completion-quimera');
+            const letters = Array.from(word.querySelectorAll('.completion-letter'));
+            const stepTime = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 400 : 120;
+
+            if (completionColorTimer) clearTimeout(completionColorTimer);
+            function runCycle() {
+                let i = 0;
+                const paintGold = () => {
+                    if (i < letters.length) {
+                        letters[i].classList.add('gold');
+                        letters[i].style.color = '#c88b32';
+                        i++;
+                        completionColorTimer = setTimeout(paintGold, stepTime);
+                    } else {
+                        let j = 0;
+                        const paintWhite = () => {
+                            if (j < letters.length) {
+                                letters[j].classList.remove('gold');
+                                letters[j].style.color = '#ffffff';
+                                j++;
+                                completionColorTimer = setTimeout(paintWhite, stepTime);
+                            } else {
+                                completionColorTimer = setTimeout(runCycle, 0);
+                            }
+                        };
+                        paintWhite();
+                    }
+                };
+                paintGold();
+            }
+            runCycle();
+        }
+
+        function revealCompletionStage() {
+            const stage = document.getElementById('completion-stage');
+            stage.classList.add('visible');
+            animateCompletionWord();
+        }
+
+        function revealCompletionMessage() {
+            const message = document.getElementById('completion-message');
+            message.classList.remove('revealed', 'active-laser');
+            void message.offsetWidth;
+            message.classList.add('active-laser');
+            setTimeout(() => {
+                message.classList.remove('active-laser');
+                message.classList.add('revealed');
+                startInitialCodeAnimation();
+            }, 650);
+        }
+
+        function startInitialCodeAnimation() {
+            const canvas = document.getElementById('initial-code-canvas');
+            if (!canvas) return;
+            if (codeAnimationFrame) cancelAnimationFrame(codeAnimationFrame);
+
+            const ctx = canvas.getContext('2d', { alpha: true });
+            const phrase = 'CÓDIGO INICIAL: 05-20-21-05.';
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+
+            const measure = document.createElement('canvas').getContext('2d');
+            let fontSize = Math.min(Math.max(26, width * 0.039), 58);
+            measure.font = `900 ${fontSize}px 'Courier New', monospace`;
+            const measured = measure.measureText(phrase).width;
+            const maxWidth = width * 0.92;
+            if (measured > maxWidth && measured > 0) fontSize = Math.floor(fontSize * (maxWidth / measured));
+            const phraseY = Math.min(height * 0.76, height - 45);
+
+            // Accesibilidad: con movimiento reducido, se presenta la frase sin partículas.
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                ctx.clearRect(0, 0, width, height);
+                ctx.font = `900 ${fontSize}px 'Courier New', monospace`;
+                ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.shadowBlur = 22; ctx.shadowColor = '#38bdf8';
+                ctx.fillStyle = '#ffffff'; ctx.fillText(phrase, width / 2, phraseY);
+                canvas.style.opacity = '1';
+                return;
+            }
+
+            const offCanvas = document.createElement('canvas');
+            offCanvas.width = width; offCanvas.height = height;
+            const offCtx = offCanvas.getContext('2d');
+            offCtx.font = `900 ${fontSize}px 'Courier New', monospace`;
+            offCtx.textAlign = 'center'; offCtx.textBaseline = 'middle';
+            offCtx.fillStyle = '#ffffff';
+            offCtx.fillText(phrase, width / 2, phraseY);
+            const pixels = offCtx.getImageData(0, 0, width, height).data;
+            const targets = [];
+            const samplingStep = width < 600 ? 3 : 2;
+            for (let y = Math.max(0, Math.floor(phraseY - fontSize * 1.5)); y < Math.min(height, phraseY + fontSize * 1.5); y += samplingStep) {
+                for (let x = 0; x < width; x += samplingStep) {
+                    const pixelIndex = (y * width + x) * 4;
+                    if (pixels[pixelIndex + 3] > 128) targets.push({ x, y });
+                }
+            }
+            for (let i = targets.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [targets[i], targets[j]] = [targets[j], targets[i]];
+            }
+
+            const particleCount = Math.min(targets.length, width < 600 ? 2800 : 5200);
+            const particles = [];
+            for (let i = 0; i < particleCount; i++) {
+                const target = targets[i];
+                const mode = Math.random();
+                let sx, sy;
+                if (mode < .4) {
+                    sx = target.x + (Math.random() - .5) * 120;
+                    sy = -Math.random() * height * .35;
+                } else if (mode < .7) {
+                    const side = Math.random() > .5 ? 1 : -1;
+                    sx = width / 2 + side * (width * .5 + Math.random() * 300);
+                    sy = target.y + (Math.random() - .5) * height * .5;
+                } else {
+                    sx = Math.random() * width;
+                    sy = Math.random() * height;
+                }
+                const roll = Math.random();
+                const colorRGB = roll > .72 ? '56, 189, 248' : roll > .42 ? '255, 255, 255' : '200, 139, 50';
+                particles.push({
+                    sx, sy, tx: target.x, ty: target.y,
+                    delay: Math.random() * 600,
+                    duration: 1400 + Math.random() * 800,
+                    colorRGB, size: 1.4 + Math.random() * 1.6,
+                    trail: Math.random() > .5
+                });
+            }
+
+            canvas.style.opacity = '1';
+            const startTime = performance.now();
+            let glitchStartTime = 0, waveStartTime = 0, allArrived = false, glitchDone = false;
+            const WAVE_DURATION = 1400, GLITCH_DURATION = 320;
+
+            function draw(now) {
+                ctx.clearRect(0, 0, width, height);
+                const elapsed = now - startTime;
+                ctx.globalCompositeOperation = 'lighter';
+                let arrivedCount = 0;
+                for (const p of particles) {
+                    const localT = Math.max(0, elapsed - p.delay);
+                    const t = Math.min(1, localT / p.duration);
+                    const eased = 1 - Math.pow(1 - t, 3);
+                    const x = p.sx + (p.tx - p.sx) * eased;
+                    const y = p.sy + (p.ty - p.sy) * eased;
+                    if (t >= 1) arrivedCount++;
+                    if (p.trail && t < .95) {
+                        const trailT = Math.max(0, eased - .18);
+                        const tx = p.sx + (p.tx - p.sx) * trailT;
+                        const ty = p.sy + (p.ty - p.sy) * trailT;
+                        ctx.strokeStyle = `rgba(${p.colorRGB}, .28)`;
+                        ctx.lineWidth = p.size * .55;
+                        ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(x, y); ctx.stroke();
+                    }
+                    ctx.fillStyle = `rgba(${p.colorRGB}, .88)`;
+                    const particleSize = t > .95 ? p.size * 1.25 : p.size;
+                    ctx.fillRect(x - particleSize / 2, y - particleSize / 2, particleSize, particleSize);
+                }
+                ctx.globalCompositeOperation = 'source-over';
+                if (!allArrived && particleCount && arrivedCount / particleCount > .92) {
+                    allArrived = true;
+                    glitchStartTime = now;
+                }
+                if (allArrived && !glitchDone) {
+                    const gElapsed = now - glitchStartTime;
+                    if (gElapsed < GLITCH_DURATION) {
+                        const offset = 5 * (1 - gElapsed / GLITCH_DURATION);
+                        ctx.save(); ctx.globalCompositeOperation = 'lighter';
+                        ctx.font = `900 ${fontSize}px 'Courier New', monospace`;
+                        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                        ctx.fillStyle = 'rgba(255, 40, 100, .55)'; ctx.fillText(phrase, width / 2 - offset, phraseY);
+                        ctx.fillStyle = 'rgba(0, 240, 255, .55)'; ctx.fillText(phrase, width / 2 + offset, phraseY);
+                        ctx.restore();
+                    } else {
+                        glitchDone = true;
+                        waveStartTime = now;
+                    }
+                }
+                if (waveStartTime > 0) {
+                    const wElapsed = now - waveStartTime;
+                    if (wElapsed < WAVE_DURATION) {
+                        const waveT = wElapsed / WAVE_DURATION;
+                        const waveX = -180 + (width + 360) * waveT;
+                        const gradient = ctx.createLinearGradient(waveX - 140, 0, waveX + 140, 0);
+                        gradient.addColorStop(0, 'rgba(56, 189, 248, 0)');
+                        gradient.addColorStop(.35, 'rgba(56, 189, 248, .65)');
+                        gradient.addColorStop(.5, 'rgba(255, 255, 255, 1)');
+                        gradient.addColorStop(.65, 'rgba(56, 189, 248, .65)');
+                        gradient.addColorStop(1, 'rgba(56, 189, 248, 0)');
+                        ctx.save(); ctx.globalCompositeOperation = 'lighter';
+                        ctx.fillStyle = gradient;
+                        ctx.fillRect(waveX - 140, phraseY - fontSize * 1.3, 280, fontSize * 2.6);
+                        ctx.restore();
+                    }
+                }
+                if (allArrived) {
+                    const pulse = .55 + .45 * Math.sin(now * .0028);
+                    ctx.save(); ctx.globalCompositeOperation = 'lighter';
+                    ctx.font = `900 ${fontSize}px 'Courier New', monospace`;
+                    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                    ctx.fillStyle = `rgba(56, 189, 248, ${.055 * pulse})`;
+                    ctx.shadowBlur = 32 * pulse; ctx.shadowColor = '#38bdf8';
+                    ctx.fillText(phrase, width / 2, phraseY);
+                    ctx.restore();
+                }
+                codeAnimationFrame = requestAnimationFrame(draw);
+            }
+            codeAnimationFrame = requestAnimationFrame(draw);
+        }
+
+        function navigateToEcosystem(event) {
+            if (event) event.preventDefault();
+            if (completionExitStarted) return;
+            completionExitStarted = true;
+            if (completionColorTimer) clearTimeout(completionColorTimer);
+
+            document.body.classList.add('completion-exit');
+            const overlay = document.getElementById('intro-overlay');
+            overlay.style.zIndex = '50000';
+            overlay.style.transition = 'opacity 1000ms ease, background-color 1000ms ease';
+            overlay.style.backgroundColor = '#ffffff';
+            overlay.style.opacity = '1';
+            setTimeout(() => {
+                window.location.href = ECOSYSTEM_URL;
+            }, 1000);
+        }
+
+        const completionLink = document.getElementById('completion-quimera');
+        completionLink.addEventListener('click', navigateToEcosystem);
+        completionLink.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') navigateToEcosystem(event);
+        });
+
         function triggerAccessGranted() {
             subtitleElem.textContent = "¡SECUENCIA CORRECTA! ACCESO CONCEDIDO.";
             subtitleElem.style.color = "#fef384";
@@ -889,30 +1193,36 @@
                 lockContainer.style.display = 'block';
                 lockContainer.classList.add('materialize-effect');
 
+                // El candado se abre; QUIMERA comienza a materializarse detrás del modal.
                 setTimeout(() => {
                     const holoLock = document.querySelector('.holo-lock');
                     if (holoLock) holoLock.classList.add('unlocked');
+                    revealCompletionStage();
                 }, 400);
 
+                // Se conserva el tiempo de exhibición del candado desbloqueado.
                 setTimeout(() => {
                     const modalBox = document.querySelector('.contenido-modal-principal');
-                    modalBox.classList.add('vaporize-effect');
+                    if (modalBox) modalBox.classList.add('vaporize-effect');
 
                     const controlsBar = document.querySelector('.controls-bar');
                     if (controlsBar) controlsBar.classList.add('vaporize-effect');
 
+                    // Cuando el modal ya se evaporó, QUIMERA queda como protagonista.
                     setTimeout(() => {
-                        matrixCanvas.style.opacity = '0';
-                        const overlay = document.getElementById('intro-overlay');
-                        overlay.style.backgroundColor = '#ffffff';
-                        overlay.style.opacity = '1';
+                        const modalRoot = document.getElementById('modal-principal');
+                        if (modalRoot) {
+                            modalRoot.style.display = 'none';
+                            modalRoot.classList.remove('tv-turn-on');
+                        }
+                        if (controlsBar) controlsBar.style.display = 'none';
+
+                        // Un segundo después del cierre, aparece la recompensa con barrido láser.
                         setTimeout(() => {
-                            window.location.replace(ECOSYSTEM_URL);
+                            revealCompletionMessage();
                         }, 1000);
                     }, 800);
-
                 }, 4000);
-
             }, 800);
         }
 
