@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quimeratrix &bull; Bienvenida Modo Oculto</title>
-    <!-- Favicon institucional compartido con indexMDQ: Q dorada sobre fondo oscuro -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230f172a'/%3E%3Ctext x='50' y='76' font-family='Georgia,serif' font-size='76' font-weight='bold' fill='%23c88b32' text-anchor='middle'%3EQ%3C/text%3E%3C/svg%3E">
+    <!-- Favicon institucional basado en el emblema heráldico tradicional -->
+    <link rel="icon" type="image/webp" href="Quimera_icon.webp">
     <style>
         :root {
             --accent: #c88b32;
@@ -195,7 +195,7 @@
         }
         #completion-stage.visible { opacity: 1; visibility: visible; }
         #completion-quimera {
-            position: absolute; top: 65%; left: 50%; transform: translate(-50%, -50%);
+            position: absolute; top: 68%; left: 50%; transform: translate(-50%, -50%);
             display: inline-flex; justify-content: center; align-items: center; gap: .045em;
             width: max-content; max-width: 96vw; white-space: nowrap;
             color: #fff; text-decoration: none; cursor: pointer; pointer-events: auto;
@@ -1212,7 +1212,9 @@
                             modalRoot.style.display = 'none';
                             modalRoot.classList.remove('tv-turn-on');
                         }
-                        if (controlsBar) controlsBar.style.display = 'none';
+                        if (controlsBar) {
+                            controlsBar.style.display = 'none';
+                        }
 
                         // Un segundo después del cierre, aparece la recompensa con barrido láser.
                         setTimeout(() => {
