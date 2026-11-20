@@ -195,7 +195,7 @@
         }
         #completion-stage.visible { opacity: 1; visibility: visible; }
         #completion-quimera {
-            position: absolute; top: 29%; left: 50%; transform: translate(-50%, -50%);
+            position: absolute; top: 65%; left: 50%; transform: translate(-50%, -50%);
             display: inline-flex; justify-content: center; align-items: center; gap: .045em;
             width: max-content; max-width: 96vw; white-space: nowrap;
             color: #fff; text-decoration: none; cursor: pointer; pointer-events: auto;
@@ -210,7 +210,7 @@
         .completion-letter.gold { color: #c88b32; text-shadow: 0 0 18px rgba(200,139,50,.95), 0 0 34px rgba(200,139,50,.55); }
         #completion-quimera:focus-visible { outline: 3px solid #38bdf8; outline-offset: 10px; }
         #completion-message {
-            position: absolute; top: 51%; left: 50%; transform: translateX(-50%);
+            position: absolute; top: 22%; left: 50%; transform: translateX(-50%);
             width: min(1100px, 92vw); margin: 0; text-align: center;
             color: #fff; font-size: clamp(.95rem, 2.05vw, 1.55rem);
             font-weight: 800; line-height: 1.9; letter-spacing: .055em;
@@ -232,8 +232,8 @@
             transition: filter .8s ease, opacity .8s ease;
         }
         @media (max-width: 650px) {
-            #completion-quimera { top: 27%; font-size: clamp(2.35rem, 12vw, 4.5rem); }
-            #completion-message { top: 47%; width: 90vw; font-size: clamp(.82rem, 3.1vw, 1.08rem); line-height: 1.8; }
+            #completion-quimera { top: 68%; font-size: clamp(2.35rem, 12vw, 4.5rem); }
+            #completion-message { top: 18%; width: 90vw; font-size: clamp(.82rem, 3.1vw, 1.08rem); line-height: 1.8; }
         }
 
         /* Lienzo Matrix */
@@ -1008,7 +1008,7 @@
             const measured = measure.measureText(phrase).width;
             const maxWidth = width * 0.92;
             if (measured > maxWidth && measured > 0) fontSize = Math.floor(fontSize * (maxWidth / measured));
-            const phraseY = Math.min(height * 0.76, height - 45);
+            const phraseY = Math.min(height * 0.45, height - 45);
 
             // Accesibilidad: con movimiento reducido, se presenta la frase sin partículas.
             if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
